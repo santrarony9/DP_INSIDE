@@ -12,6 +12,7 @@ export interface FreelancerProfile {
 }
 
 export type PipelineStage = 
+  | 'unassigned'
   | 'footage-received'
   | 'assigned'
   | 'editing'
@@ -97,6 +98,9 @@ export interface JobCard {
   submittedDeliverableUrl?: string; // Link submitted by editor when finishing work
   submissionNotes?: string; // Editor handoff notes upon submission
   submittedAt?: string; // Timestamp of submission
+  cancellationRequested?: boolean;
+  cancellationReason?: string;
+  cancellationRequestedAt?: string;
 }
 
 export type SocialPlatform = 'Facebook' | 'Instagram' | 'YouTube';

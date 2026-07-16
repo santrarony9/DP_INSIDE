@@ -5,10 +5,10 @@ const jobSchema = new mongoose.Schema({
   clientId: { type: String, required: true },
   stage: {
     type: String,
-    enum: ['footage-received', 'assigned', 'editing', 'review', 'revisions', 'delivered'],
-    default: 'assigned'
+    enum: ['unassigned', 'footage-received', 'assigned', 'editing', 'review', 'revisions', 'delivered'],
+    default: 'unassigned'
   },
-  assignedTo: { type: String },
+  assignedTo: { type: String, default: null },
   assignedBy: { type: String },
   assignedFreelancerName: { type: String },
   freelanceCost: { type: Number },
@@ -41,7 +41,10 @@ const jobSchema = new mongoose.Schema({
   },
   submittedDeliverableUrl: { type: String },
   submissionNotes: { type: String },
-  submittedAt: { type: String }
+  submittedAt: { type: String },
+  cancellationRequested: { type: Boolean, default: false },
+  cancellationReason: { type: String },
+  cancellationRequestedAt: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Job', jobSchema);

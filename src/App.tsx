@@ -27,7 +27,8 @@ import {
   Code2,
   Check,
   Users,
-  Trash2
+  Trash2,
+  BarChart3
 } from 'lucide-react';
 import './App.css';
 import type { 
@@ -39,14 +40,15 @@ import type {
 } from './types';
 import { 
   INITIAL_TEAM, 
-  INITIAL_CLIENTS, 
-  INITIAL_JOBS
+  INITIAL_CLIENTS
 } from './data/mockData';
 import LoginScreen from './components/LoginScreen';
 import ResourceCalendar from './components/ResourceCalendar';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 import { useAuth, useTeam, useClients, useJobs, useSocialPosts } from './hooks';
 
 const STAGES: { id: PipelineStage; title: string; color: string }[] = [
+  { id: 'unassigned', title: '0. Unassigned Inbox', color: '#64748b' },
   { id: 'footage-received', title: '1. Footage Received', color: '#8b5cf6' },
   { id: 'assigned', title: '2. Assigned to Editor', color: '#06b6d4' },
   { id: 'editing', title: '3. In Editing (Active)', color: '#f59e0b' },
@@ -91,7 +93,7 @@ export default function App() {
   // State (Syncs with VPS API)
   const { team, setTeam, deleteTeamMember } = useTeam();
   const { clients, setClients, deleteClient } = useClients();
-  const { jobs, setJobs, deleteJob } = useJobs();
+  const { jobs, setJobs, deleteJob, addJob, updateJob } = useJobs();
   const { socialPosts, setSocialPosts, deletePost } = useSocialPosts();
 
   // Auth & Workstation
@@ -101,7 +103,7 @@ export default function App() {
   const [targetLoginMember, setTargetLoginMember] = useState<TeamMember | null>(null);
 
   // Navigation (Clean Sidebar)
-  const [activeTab, setActiveTab] = useState<'overview' | 'kanban' | 'monitoring' | 'social' | 'clients' | 'resource-calendar'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'kanban' | 'monitoring' | 'social' | 'clients' | 'resource-calendar' | 'analytics'>('overview');
 
   // Filters (`Employee & Contractor Workload Tracking`)
   const [selectedEmployeeFilter, setSelectedEmployeeFilter] = useState<string>('all');
@@ -126,12 +128,15 @@ export default function App() {
   const [showJobDetailModal, setShowJobDetailModal] = useState<JobCard | null>(null);
   const [showSuccessBanner, setShowSuccessBanner] = useState<string | null>(null);
 
+  // Job Modal extra states
+  const [submissionUrl, setSubmissionUrl] = useState<string>('');
+  const [submissionNotes, setSubmissionNotes] = useState<string>('');
+  const [cancellationReason, setCancellationReason] = useState<string>('');
+
   // Form states for New Job
   const [newJobTitle, setNewJobTitle] = useState('');
-  const [newJobClient, setNewJobClient] = useState(INITIAL_CLIENTS[0].id);
-  const [newJobAssignee, setNewJobAssignee] = useState(INITIAL_TEAM[2].id);
+  const [newJobClient, setNewJobClient] = useState(INITIAL_CLIENTS[0]?.id || '');
   const [newJobEstimatedHours, setNewJobEstimatedHours] = useState<number>(4);
-  const [newJobFreelancerTag, setNewJobFreelancerTag] = useState<string>('Rahul Bose • Reel Specialist (@ ₹700/hr)');
   const [showAddFreelancerModal, setShowAddFreelancerModal] = useState<boolean>(false);
   const [newFlName, setNewFlName] = useState<string>('');
   const [newFlSpecialty, setNewFlSpecialty] = useState<any>('Video Editor');
@@ -148,7 +153,7 @@ export default function App() {
 
   // Form states for New Social Post
   const [newPostTitle, setNewPostTitle] = useState('');
-  const [newPostClient, setNewPostClient] = useState(INITIAL_CLIENTS[0].id);
+  const [newPostClient, setNewPostClient] = useState(INITIAL_CLIENTS[0]?.id || '');
   const [newPostPlatform, setNewPostPlatform] = useState<'Facebook' | 'Instagram' | 'YouTube'>('Instagram');
   const [newPostDate, setNewPostDate] = useState('2026-07-21 18:00');
 
@@ -172,11 +177,8 @@ export default function App() {
   // One-Time Auto-Boot Workstation Configuration Modal State (`Windows & Mac`)
   const [showWorkstationConfigModal, setShowWorkstationConfigModal] = useState<boolean>(false);
   const [configSeatId, setConfigSeatId] = useState<string>('usr-3');
-  const [configOsType, setConfigOsType] = useState<'windows' | 'mac'>('windows');
 
-  // Editor Portal Submission states
-  const [submissionUrl, setSubmissionUrl] = useState('');
-  const [submissionNotes, setSubmissionNotes] = useState('');
+  const [configOsType, setConfigOsType] = useState<'windows' | 'mac'>('windows');
 
   useEffect(() => {
     let interval: any = null;
@@ -290,6 +292,65 @@ export default function App() {
     triggerAlert(`Project submitted successfully! Turnaround SLA Clock stopped & completed.`);
   };
 
+  const handleRequestCancellation = (jobId: string) => {
+    if (!cancellationReason) {
+      triggerAlert('Please provide a reason for cancelling this project.');
+      return;
+    }
+    const updatedJob = jobs.find(j => j.id === jobId);
+    if (updatedJob) {
+      updateJob(updatedJob.id, {
+        ...updatedJob,
+        cancellationRequested: true,
+        cancellationReason,
+        cancellationRequestedAt: new Date().toLocaleString(),
+        notes: [
+          ...updatedJob.notes,
+          `[CANCELLATION REQUESTED by ${currentUser?.name} on ${new Date().toLocaleString()}]: Reason: ${cancellationReason}`
+        ]
+      });
+      triggerAlert('Cancellation request sent to Managers for approval.');
+      setShowJobDetailModal(null);
+      setCancellationReason('');
+    }
+  };
+
+  const handleApproveCancellation = (jobId: string) => {
+    const updatedJob = jobs.find(j => j.id === jobId);
+    if (updatedJob) {
+      updateJob(updatedJob.id, {
+        ...updatedJob,
+        cancellationRequested: false,
+        cancellationReason: '',
+        stage: 'unassigned',
+        assignedTo: null,
+        turnaroundClockStatus: 'Not Started',
+        notes: [
+          ...updatedJob.notes,
+          `[CANCELLATION APPROVED by Manager on ${new Date().toLocaleString()}]: Project moved back to Unassigned Queue.`
+        ]
+      });
+      triggerAlert('Cancellation approved. Project is now Unassigned.');
+      setShowJobDetailModal(null);
+    }
+  };
+
+  const handleRejectCancellation = (jobId: string) => {
+    const updatedJob = jobs.find(j => j.id === jobId);
+    if (updatedJob) {
+      updateJob(updatedJob.id, {
+        ...updatedJob,
+        cancellationRequested: false,
+        notes: [
+          ...updatedJob.notes,
+          `[CANCELLATION REJECTED by Manager on ${new Date().toLocaleString()}]: Editor must complete this project.`
+        ]
+      });
+      triggerAlert('Cancellation rejected. Editor notified to continue work.');
+      setShowJobDetailModal(null);
+    }
+  };
+
   const handleAddFreelancerToPool = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newFlName) return;
@@ -317,17 +378,16 @@ export default function App() {
     triggerAlert(`Added ${newFlName} (${newFlSpecialty}) to Freelance Contractor Pool.`);
   };
 
-  const handleCreateJob = (e: React.FormEvent) => {
+  const handleCreateJob = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newJobTitle) return;
     const newCard: JobCard = {
       id: `job-${Date.now()}`,
       title: newJobTitle,
       clientId: newJobClient,
-      stage: 'assigned',
-      assignedTo: newJobAssignee,
+      stage: 'unassigned',
+      assignedTo: null,
       assignedBy: currentUser?.id || '',
-      assignedFreelancerName: newJobAssignee === 'usr-freelance-pool' ? newJobFreelancerTag : undefined,
       estimatedHours: Number(newJobEstimatedHours),
       loggedHours: 0,
       turnaroundSLA: Number(newJobEstimatedHours) * 12,
@@ -336,14 +396,13 @@ export default function App() {
       createdAt: new Date().toISOString().split('T')[0],
       dueDate: new Date(Date.now() + 172800000).toISOString().split('T')[0],
       priority: 'normal',
-      driveDeliverableLink: 'https://drive.google.com/drive/folders/new-upload',
-      notes: [`[${currentUser?.avatar} ${currentUser?.name}]: Scoped for ${newJobEstimatedHours}h edit work. Please track active time.`],
+      notes: [`[${currentUser?.avatar} ${currentUser?.name}]: Added to Unassigned Queue.`],
       checklist: { rawIngested: true, audioSynced: false, colorGraded: false, clientApproved: false }
     };
-    setJobs([newCard, ...jobs]);
+    await addJob(newCard);
     setShowNewJobModal(false);
     setNewJobTitle('');
-    triggerAlert(`Job "${newJobTitle}" created & assigned.`);
+    triggerAlert(`Job "${newJobTitle}" created & added to Unassigned Queue.`);
   };
 
   const handleCreateSocial = (e: React.FormEvent) => {
@@ -481,6 +540,8 @@ export default function App() {
   };
 
   const filteredJobs = jobs.filter((j) => {
+    // Hide unassigned jobs from regular editors
+    if (j.stage === 'unassigned' && !isManagerOrOwner) return false;
     if (selectedEmployeeFilter !== 'all') {
       if (selectedEmployeeFilter.startsWith('fl-')) {
         const flName = selectedEmployeeFilter.replace('fl-', '');
@@ -578,6 +639,18 @@ export default function App() {
               <span className="badge badge-emerald">6 PCs</span>
             </button>
 
+            {isManagerOrOwner && (
+              <button 
+                className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`}
+                onClick={() => setActiveTab('analytics')}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <BarChart3 size={17} color={activeTab === 'analytics' ? 'var(--accent-gold)' : 'inherit'} />
+                  <span>Analytics</span>
+                </div>
+              </button>
+            )}
+
             <button 
               className={`nav-item ${activeTab === 'social' ? 'active' : ''}`}
               onClick={() => setActiveTab('social')}
@@ -647,7 +720,7 @@ export default function App() {
             <h2 style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
               {activeTab === 'overview' && 'EXECUTIVE STUDIO OVERVIEW'}
               {activeTab === 'kanban' && 'TURNAROUND KANBAN • 15-DAY EDIT PIPELINE'}
-              {activeTab === 'monitoring' && 'WORKSTATION ACTIVITY & EMPLOYEE TIME AUDIT'}
+              {activeTab === 'monitoring' && 'EMPLOYEE AUDIT TRAIL'}
               {activeTab === 'social' && 'MULTI-CLIENT SOCIAL CONTENT CALENDAR'}
               {activeTab === 'clients' && 'CENTRALIZED CLIENT & CLOUD STORAGE MATRIX'}
               {activeTab === 'resource-calendar' && 'TEAM WORKLOAD & RESOURCE CALENDAR'}
@@ -806,11 +879,17 @@ export default function App() {
             </div>
 
             {/* Action Buttons */}
-            {activeTab === 'kanban' && isManagerOrOwner && (
-              <button className="btn-primary" onClick={() => setShowNewJobModal(true)}>
-                <Plus size={15} />
-                <span>New Shoot</span>
-              </button>
+            {(activeTab === 'kanban' || activeTab === 'overview') && isManagerOrOwner && (
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button className="btn-secondary" onClick={() => setShowAddClientModal(true)}>
+                  <Plus size={15} />
+                  <span>Add Client</span>
+                </button>
+                <button className="btn-primary" onClick={() => setShowNewJobModal(true)}>
+                  <Plus size={15} />
+                  <span>New Shoot</span>
+                </button>
+              </div>
             )}
             {activeTab === 'social' && (
               <button className="btn-primary" onClick={() => setShowNewSocialModal(true)}>
@@ -858,6 +937,10 @@ export default function App() {
              ========================================================================= */}
           {activeTab === 'resource-calendar' && (
             <ResourceCalendar team={team} jobs={jobs} />
+          )}
+
+          {activeTab === 'analytics' && isManagerOrOwner && (
+            <AnalyticsDashboard team={team} jobs={jobs} />
           )}
 
           {activeTab === 'overview' && (
@@ -917,14 +1000,18 @@ export default function App() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem' }}>
-                    <span style={{ color: '#fb7185' }}>Diandra Wedding (`14d`)</span>
-                    <button 
-                      className="btn-danger" 
-                      style={{ padding: '3px 8px', fontSize: '0.7rem' }}
-                      onClick={() => setShowJobDetailModal(INITIAL_JOBS[0])}
-                    >
-                      Inspect
-                    </button>
+                    <span style={{ color: jobs.some(j => j.isOverdue) ? '#fb7185' : 'var(--text-muted)' }}>
+                      {jobs.filter(j => j.isOverdue)[0]?.title.substring(0, 20) || 'All tasks on schedule'}
+                    </span>
+                    {jobs.some(j => j.isOverdue) && (
+                      <button 
+                        className="btn-danger" 
+                        style={{ padding: '3px 8px', fontSize: '0.7rem' }}
+                        onClick={() => setShowJobDetailModal(jobs.find(j => j.isOverdue) || null)}
+                      >
+                        Inspect
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -936,7 +1023,7 @@ export default function App() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    <span>Piyali & Rohan Editing</span>
+                    <span>Studio Workstations</span>
                     <span className="badge badge-cyan">Active</span>
                   </div>
                 </div>
@@ -1034,28 +1121,8 @@ export default function App() {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '4px 8px', borderRadius: '4px' }}>PD</span>
-                        <div>
-                          <div style={{ fontSize: '0.85rem', color: 'var(--text-main)' }}><strong>Piyali Das</strong> logged <strong>4.5 hours</strong> in Premiere Pro (`Diandra Highlight Reel`).</div>
-                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>12m ago • Workstation PC #3</div>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '4px 8px', borderRadius: '4px' }}>AS</span>
-                        <div>
-                          <div style={{ fontSize: '0.85rem', color: 'var(--text-main)' }}><strong>Aditya Sharma</strong> created shoot card for <strong>TechCorp Keynote Cut</strong>.</div>
-                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>1h ago • Manager Dashboard</div>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '4px 8px', borderRadius: '4px' }}>RV</span>
-                        <div>
-                          <div style={{ fontSize: '0.85rem', color: 'var(--text-main)' }}><strong>Rohan Verma</strong> submitted final master render link for <strong>FitPulse 60s Promo</strong>.</div>
-                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>2h ago • Workstation PC #4</div>
-                        </div>
+                      <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                        No recent activity recorded.
                       </div>
                     </div>
                   </div>
@@ -1066,7 +1133,7 @@ export default function App() {
                       <a href="https://drive.google.com" target="_blank" rel="noreferrer" className="badge badge-cyan" style={{ textDecoration: 'none' }}>Open Drive</a>
                     </div>
                     <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      All 4 clients standardized under `ClientName / RawFootage / Edits / Final Delivery`.
+                      All clients standardized under `ClientName / RawFootage / Edits / Final Delivery`.
                     </div>
                   </div>
                 </div>
@@ -1216,11 +1283,20 @@ export default function App() {
                             key={job.id} 
                             className="clean-card"
                             onClick={() => setShowJobDetailModal(job)}
-                            style={{ padding: '14px', cursor: 'pointer', borderColor: job.isOverdue ? 'rgba(244, 63, 94, 0.5)' : 'var(--border-subtle)' }}
+                            style={{ 
+                              padding: '14px', 
+                              cursor: 'pointer', 
+                              borderColor: job.cancellationRequested ? '#ef4444' : (job.isOverdue ? 'rgba(244, 63, 94, 0.5)' : 'var(--border-subtle)'),
+                              boxShadow: job.cancellationRequested ? '0 0 12px rgba(239, 68, 68, 0.3)' : 'none'
+                            }}
                           >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px' }}>
                               <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.25' }}>{job.title}</span>
-                              {job.isOverdue && <span className="badge badge-urgent">Overdue</span>}
+                              {job.cancellationRequested ? (
+                                <span className="badge" style={{ background: '#ef4444', color: '#fff' }}>Cancel Req</span>
+                              ) : job.isOverdue ? (
+                                <span className="badge badge-urgent">Overdue</span>
+                              ) : null}
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '8px' }}>
@@ -1333,8 +1409,7 @@ export default function App() {
             <div className="clean-panel" style={{ padding: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
                 <div>
-                  <h3 style={{ fontSize: '1.24rem', fontWeight: 800, color: 'var(--text-main)' }}>EMPLOYEE TIME & APPLICATION AUDIT TRAIL</h3>
-                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px' }}>DPDPA 2023 & IT Act 2000 Compliant Workstation Monitoring (`How vs What`)</p>
+                  <h3 style={{ fontSize: '1.24rem', fontWeight: 800, color: 'var(--text-main)' }}>EMPLOYEE AUDIT TRAIL</h3>
                 </div>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <button 
@@ -1514,11 +1589,8 @@ export default function App() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span className="badge badge-gold" style={{ fontSize: '0.72rem' }}>Unified Position: Seat 7</span>
-                      <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>FREELANCE CONTRACTOR POOL & ACTIVE ROSTER (`7-10 EDITORS`)</h4>
+                      <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>FREELANCE CONTRACTOR POOL</h4>
                     </div>
-                    <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      Instead of creating 10 separate login seats, all external editors operate under Seat 7 (`Freelance Pool`). Track rates, turnaround ratings & current edits here:
-                    </p>
                   </div>
                   {isManagerOrOwner && (
                     <button className="btn-primary" style={{ padding: '6px 14px', fontSize: '0.78rem' }} onClick={() => setShowAddFreelancerModal(true)}>
@@ -2139,6 +2211,79 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Manager Assignment Block for Unassigned Jobs */}
+              {isManagerOrOwner && showJobDetailModal.stage === 'unassigned' && (
+                <div style={{ background: 'rgba(6, 182, 212, 0.1)', border: '1px solid #06b6d4', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
+                  <h4 style={{ color: '#06b6d4', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Assign this Project to an Editor:</h4>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <select 
+                      className="input-field" 
+                      onChange={(e) => {
+                        const newAssignee = e.target.value;
+                        if(newAssignee) {
+                          updateJob(showJobDetailModal.id, {
+                            ...showJobDetailModal,
+                            stage: 'assigned',
+                            assignedTo: newAssignee,
+                            notes: [...showJobDetailModal.notes, `[ASSIGNED by ${currentUser?.name} on ${new Date().toLocaleString()}] to ${team.find(t=>t.id===newAssignee)?.name}`]
+                          });
+                          setShowJobDetailModal(null);
+                          triggerAlert('Project assigned successfully.');
+                        }
+                      }}
+                    >
+                      <option value="">Select Editor...</option>
+                      {team.filter((t) => t.roleType === 'editor' || t.roleType === 'freelance').map((t) => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* Cancellation Request Section */}
+              {!isManagerOrOwner && showJobDetailModal.stage !== 'delivered' && showJobDetailModal.stage !== 'unassigned' && !showJobDetailModal.cancellationRequested && (
+                <div style={{ background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
+                  <h4 style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Stuck or Unable to Complete?</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <input 
+                      type="text" 
+                      value={cancellationReason}
+                      onChange={(e) => setCancellationReason(e.target.value)}
+                      placeholder="Why do you need to drop this project? (Required)"
+                      className="input-field" 
+                      style={{ borderColor: 'rgba(239,68,68,0.3)' }}
+                    />
+                    <button className="btn-secondary" style={{ borderColor: 'rgba(239,68,68,0.5)', color: '#ef4444', alignSelf: 'flex-start' }} onClick={() => handleRequestCancellation(showJobDetailModal.id)}>
+                      Request Project Cancellation
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {showJobDetailModal.cancellationRequested && (
+                <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
+                  <h4 style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: 800, marginBottom: '4px' }}>🚨 CANCELLATION REQUESTED</h4>
+                  <p style={{ color: 'var(--text-main)', fontSize: '0.8rem', marginBottom: '12px' }}>
+                    <strong>Reason:</strong> {showJobDetailModal.cancellationReason}
+                  </p>
+                  {isManagerOrOwner ? (
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button className="btn-secondary" style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none' }} onClick={() => handleApproveCancellation(showJobDetailModal.id)}>
+                        Approve Cancellation (Unassign)
+                      </button>
+                      <button className="btn-secondary" onClick={() => handleRejectCancellation(showJobDetailModal.id)}>
+                        Reject Request (Force Completion)
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontStyle: 'italic' }}>
+                      Waiting for Manager approval to cancel...
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Editor Final Submission Box */}
               {showJobDetailModal.stage !== 'delivered' ? (
                 <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '12px', padding: '16px' }}>
@@ -2238,35 +2383,13 @@ export default function App() {
             <form onSubmit={handleCreateJob}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <input type="text" placeholder="Shoot Title *" value={newJobTitle} onChange={(e) => setNewJobTitle(e.target.value)} className="input-field" required />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
                   <select value={newJobClient} onChange={(e) => setNewJobClient(e.target.value)} className="input-field">
                     {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
-                  <select value={newJobAssignee} onChange={(e) => setNewJobAssignee(e.target.value)} className="input-field">
-                    {team.filter((t) => t.roleType === 'editor' || t.roleType === 'freelance').map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-                  </select>
                 </div>
 
-                {newJobAssignee === 'usr-freelance-pool' && (
-                  <div style={{ background: 'rgba(226, 183, 20, 0.08)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(226, 183, 20, 0.35)' }}>
-                    <label style={{ fontSize: '0.78rem', color: 'var(--accent-gold)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>
-                      Assign Specific Contractor from Freelance Pool
-                    </label>
-                    <select 
-                      value={newJobFreelancerTag}
-                      onChange={(e) => setNewJobFreelancerTag(e.target.value)}
-                      className="input-field"
-                    >
-                      {(team.find(t => t.id === 'usr-freelance-pool')?.freelancerPoolRoster || []).map((fl) => (
-                        <option key={fl.id} value={`${fl.name} • ${fl.specialty} (Fixed Project Mode)`}>
-                          {fl.name} • {fl.specialty} (Fixed Deliverable Mode)
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Estimated Edit Hours</label>
                     <input type="number" value={newJobEstimatedHours} onChange={(e) => setNewJobEstimatedHours(Number(e.target.value))} className="input-field" />
@@ -2274,7 +2397,7 @@ export default function App() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="submit" className="btn-primary">Create & Assign</button>
+                <button type="submit" className="btn-primary">Add to Unassigned Inbox</button>
               </div>
             </form>
           </div>
@@ -2573,15 +2696,12 @@ export default function App() {
             <div className="modal-header" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '16px' }}>
               <div>
                 <span className="badge badge-gold" style={{ marginBottom: '6px' }}>Admin 1-Click Deployment</span>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }}>⚡ Configure PC / Mac Seat (`One-Time Auto-Boot Setup`)</h3>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }}>⚡ Configure PC / Mac Seat</h3>
               </div>
               <button className="btn-secondary" onClick={() => setShowWorkstationConfigModal(false)}>✕</button>
             </div>
 
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '20px' }}>
-              <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-                Select the staff member and their workstation OS below. Click the download button to instantly generate their pre-configured auto-boot installer (`takes 1 double-click on their PC/Mac to run on startup forever with zero black terminal popup window and $0 monthly cost`).
-              </p>
 
               {/* Step 1: Select Seat */}
               <div>
@@ -2748,10 +2868,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="modal-footer" style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                ✨ <strong>Zero-Configuration Guarantee:</strong> Runs automatically on PC/Mac startup with $0 monthly cost.
-              </span>
+            <div className="modal-footer" style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
               <button className="btn-secondary" onClick={() => setShowWorkstationConfigModal(false)}>Close Portal</button>
             </div>
           </div>
