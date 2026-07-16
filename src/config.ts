@@ -1,9 +1,9 @@
 // API Configuration for DP Inside StudioOS
 // This connects your frontend to the MongoDB backend on your VPS
 
-// In production, set VITE_API_URL in .env file
-// For local development, it falls back to localhost
-export const API_URL = import.meta.env.VITE_API_URL || 'http://160.187.68.243:4000';
+// In production, set VITE_API_URL in .env file, or it defaults to empty string to use Vercel rewrites
+// For local development, it falls back to the VPS IP
+export const API_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? '' : 'http://160.187.68.243:4000');
 
 // Helper function for authenticated API calls
 export async function apiFetch(endpoint: string, options: RequestInit = {}): Promise<Response> {
