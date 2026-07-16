@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { useAuth } from '../hooks';
 import { Lock, LogIn, AlertCircle } from 'lucide-react';
 
-export default function LoginScreen() {
-  const { login, error: authError, loading } = useAuth();
+interface LoginScreenProps {
+  onLogin: (pin: string) => Promise<void>;
+  loading: boolean;
+  authError: string | null;
+}
+
+export default function LoginScreen({ onLogin, loading, authError }: LoginScreenProps) {
   const [pin, setPin] = useState('');
   const [localError, setLocalError] = useState('');
 
@@ -14,7 +18,7 @@ export default function LoginScreen() {
       return;
     }
     setLocalError('');
-    await login(pin);
+    await onLogin(pin);
   };
 
   return (

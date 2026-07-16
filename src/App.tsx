@@ -93,7 +93,7 @@ export default function App() {
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>(INITIAL_SOCIAL_POSTS);
 
   // Auth & Workstation
-  const { currentUser, logout, loading: authLoading } = useAuth();
+  const { currentUser, login, logout, error, loading: authLoading } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const [loginPinInput, setLoginPinInput] = useState<string>('');
   const [targetLoginMember, setTargetLoginMember] = useState<TeamMember | null>(null);
@@ -499,7 +499,7 @@ export default function App() {
   }
 
   if (!currentUser) {
-    return <LoginScreen />;
+    return <LoginScreen onLogin={login} loading={authLoading} authError={error} />;
   }
 
   // ─── RENDER DASHBOARD ────────────────────────────────────
