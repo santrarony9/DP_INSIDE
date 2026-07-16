@@ -25,7 +25,8 @@ import {
   Settings,
   Webhook,
   Code2,
-  Check
+  Check,
+  Users
 } from 'lucide-react';
 import './App.css';
 import type { 
@@ -42,6 +43,7 @@ import {
   INITIAL_SOCIAL_POSTS 
 } from './data/mockData';
 import LoginScreen from './components/LoginScreen';
+import ResourceCalendar from './components/ResourceCalendar';
 import { useAuth } from './hooks';
 
 const STAGES: { id: PipelineStage; title: string; color: string }[] = [
@@ -99,7 +101,7 @@ export default function App() {
   const [targetLoginMember, setTargetLoginMember] = useState<TeamMember | null>(null);
 
   // Navigation (Clean Sidebar)
-  const [activeTab, setActiveTab] = useState<'overview' | 'kanban' | 'monitoring' | 'social' | 'clients'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'kanban' | 'monitoring' | 'social' | 'clients' | 'resource-calendar'>('overview');
 
   // Filters (`Employee & Contractor Workload Tracking`)
   const [selectedEmployeeFilter, setSelectedEmployeeFilter] = useState<string>('all');
@@ -546,6 +548,16 @@ export default function App() {
             </button>
 
             <button 
+              className={`nav-item ${activeTab === 'resource-calendar' ? 'active' : ''}`}
+              onClick={() => setActiveTab('resource-calendar')}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Users size={17} color={activeTab === 'resource-calendar' ? 'var(--accent-gold)' : 'inherit'} />
+                <span>Team Workload</span>
+              </div>
+            </button>
+
+            <button 
               className={`nav-item ${activeTab === 'monitoring' ? 'active' : ''}`}
               onClick={() => setActiveTab('monitoring')}
             >
@@ -628,6 +640,7 @@ export default function App() {
               {activeTab === 'monitoring' && 'WORKSTATION ACTIVITY & EMPLOYEE TIME AUDIT'}
               {activeTab === 'social' && 'MULTI-CLIENT SOCIAL CONTENT CALENDAR'}
               {activeTab === 'clients' && 'CENTRALIZED CLIENT & CLOUD STORAGE MATRIX'}
+              {activeTab === 'resource-calendar' && 'TEAM WORKLOAD & RESOURCE CALENDAR'}
             </h2>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
               {activeTab === 'overview' && 'Real-time production metrics, active studio workload & financial highlights.'}
@@ -635,6 +648,7 @@ export default function App() {
               {activeTab === 'monitoring' && 'DPDPA 2023 & IT Act 2000 compliant workstation proof-of-work tracking.'}
               {activeTab === 'social' && 'Automated cross-platform publishing schedule & client content calendar.'}
               {activeTab === 'clients' && 'Standardized 3-account 15TB cloud folder hierarchy & project routing.'}
+              {activeTab === 'resource-calendar' && 'Live capacity tracking, project days active, and idle resource identification.'}
             </div>
           </div>
 
@@ -832,6 +846,10 @@ export default function App() {
           {/* =========================================================================
               TAB 0: EXECUTIVE DASHBOARD (CLEAN OVERVIEW)
              ========================================================================= */}
+          {activeTab === 'resource-calendar' && (
+            <ResourceCalendar team={team} jobs={jobs} />
+          )}
+
           {activeTab === 'overview' && (
             <div>
               {/* Employee & Editor Active Assignment Hub (SLA Turnaround Portal) */}
