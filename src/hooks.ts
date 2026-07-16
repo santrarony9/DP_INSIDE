@@ -346,7 +346,7 @@ export function useAuth() {
     try {
       const res = await apiFetch('/api/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ pin })
+        body: JSON.stringify({ phone: pin })
       });
       const data = await res.json();
       if (res.ok) {
