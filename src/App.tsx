@@ -39,12 +39,11 @@ import type {
 import { 
   INITIAL_TEAM, 
   INITIAL_CLIENTS, 
-  INITIAL_JOBS, 
-  INITIAL_SOCIAL_POSTS 
+  INITIAL_JOBS
 } from './data/mockData';
 import LoginScreen from './components/LoginScreen';
 import ResourceCalendar from './components/ResourceCalendar';
-import { useAuth } from './hooks';
+import { useAuth, useTeam, useClients, useJobs, useSocialPosts } from './hooks';
 
 const STAGES: { id: PipelineStage; title: string; color: string }[] = [
   { id: 'footage-received', title: '1. Footage Received', color: '#8b5cf6' },
@@ -88,11 +87,11 @@ const SocialBrandIcon = ({ platform }: { platform: string }) => {
 };
 
 export default function App() {
-  // State
-  const [team, setTeam] = useState<TeamMember[]>(INITIAL_TEAM);
-  const [clients, setClients] = useState<Client[]>(INITIAL_CLIENTS);
-  const [jobs, setJobs] = useState<JobCard[]>(INITIAL_JOBS);
-  const [socialPosts, setSocialPosts] = useState<SocialPost[]>(INITIAL_SOCIAL_POSTS);
+  // State (Syncs with VPS API)
+  const { team, setTeam } = useTeam();
+  const { clients, setClients } = useClients();
+  const { jobs, setJobs } = useJobs();
+  const { socialPosts, setSocialPosts } = useSocialPosts();
 
   // Auth & Workstation
   const { currentUser, login, logout, error, loading: authLoading } = useAuth();

@@ -35,11 +35,9 @@ export function useTeam() {
       const res = await apiFetch('/api/team');
       if (res.ok) {
         const data = await res.json();
-        if (data.length > 0) {
-          setTeam(data);
-          setCache('team', data);
-          setApiAvailable(true);
-        }
+        setTeam(data);
+        setCache('team', data);
+        setApiAvailable(true);
       }
     } catch {
       // API not available, use cached/mock data
@@ -121,11 +119,9 @@ export function useJobs() {
       const res = await apiFetch('/api/jobs');
       if (res.ok) {
         const data = await res.json();
-        if (data.length > 0) {
-          setJobs(data);
-          setCache('jobs', data);
-          setApiAvailable(true);
-        }
+        setJobs(data);
+        setCache('jobs', data);
+        setApiAvailable(true);
       }
     } catch {
       setApiAvailable(false);
@@ -204,11 +200,9 @@ export function useClients() {
       const res = await apiFetch('/api/clients');
       if (res.ok) {
         const data = await res.json();
-        if (data.length > 0) {
-          setClients(data);
-          setCache('clients', data);
-          setApiAvailable(true);
-        }
+        setClients(data);
+        setCache('clients', data);
+        setApiAvailable(true);
       }
     } catch {
       setApiAvailable(false);
@@ -262,11 +256,9 @@ export function useSocialPosts() {
       const res = await apiFetch('/api/social');
       if (res.ok) {
         const data = await res.json();
-        if (data.length > 0) {
-          setSocialPosts(data);
-          setCache('socialPosts', data);
-          setApiAvailable(true);
-        }
+        setSocialPosts(data);
+        setCache('socialPosts', data);
+        setApiAvailable(true);
       }
     } catch {
       setApiAvailable(false);
