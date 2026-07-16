@@ -103,7 +103,29 @@ export function useTeam() {
     });
   }, [apiAvailable]);
 
-  return { team, setTeam, loading, apiAvailable, addTeamMember, updateTeamMember, refetch: fetchTeam };
+  const deleteTeamMember = useCallback(async (id: string) => {
+    if (apiAvailable) {
+      try {
+        const res = await apiFetch(`/api/team/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          setTeam(prev => {
+            const updated = prev.filter(t => t.id !== id && (t as any)._id !== id);
+            setCache('team', updated);
+            return updated;
+          });
+          return true;
+        }
+      } catch { /* fall through */ }
+    }
+    setTeam(prev => {
+      const updated = prev.filter(t => t.id !== id);
+      setCache('team', updated);
+      return updated;
+    });
+    return true;
+  }, [apiAvailable]);
+
+  return { team, setTeam, loading, apiAvailable, addTeamMember, updateTeamMember, deleteTeamMember, refetch: fetchTeam };
 }
 
 // ========================================================
@@ -184,7 +206,29 @@ export function useJobs() {
     });
   }, [apiAvailable]);
 
-  return { jobs, setJobs, loading, apiAvailable, addJob, updateJob, refetch: fetchJobs };
+  const deleteJob = useCallback(async (id: string) => {
+    if (apiAvailable) {
+      try {
+        const res = await apiFetch(`/api/jobs/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          setJobs(prev => {
+            const updated = prev.filter(j => j.id !== id && (j as any)._id !== id);
+            setCache('jobs', updated);
+            return updated;
+          });
+          return true;
+        }
+      } catch { /* fall through */ }
+    }
+    setJobs(prev => {
+      const updated = prev.filter(j => j.id !== id);
+      setCache('jobs', updated);
+      return updated;
+    });
+    return true;
+  }, [apiAvailable]);
+
+  return { jobs, setJobs, loading, apiAvailable, addJob, updateJob, deleteJob, refetch: fetchJobs };
 }
 
 // ========================================================
@@ -240,7 +284,29 @@ export function useClients() {
     return localClient;
   }, [apiAvailable]);
 
-  return { clients, setClients, loading, apiAvailable, addClient, refetch: fetchClients };
+  const deleteClient = useCallback(async (id: string) => {
+    if (apiAvailable) {
+      try {
+        const res = await apiFetch(`/api/clients/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          setClients(prev => {
+            const updated = prev.filter(c => c.id !== id && (c as any)._id !== id);
+            setCache('clients', updated);
+            return updated;
+          });
+          return true;
+        }
+      } catch { /* fall through */ }
+    }
+    setClients(prev => {
+      const updated = prev.filter(c => c.id !== id);
+      setCache('clients', updated);
+      return updated;
+    });
+    return true;
+  }, [apiAvailable]);
+
+  return { clients, setClients, loading, apiAvailable, addClient, deleteClient, refetch: fetchClients };
 }
 
 // ========================================================
@@ -321,7 +387,29 @@ export function useSocialPosts() {
     });
   }, [apiAvailable]);
 
-  return { socialPosts, setSocialPosts, loading, apiAvailable, addPost, updatePost, refetch: fetchPosts };
+  const deletePost = useCallback(async (id: string) => {
+    if (apiAvailable) {
+      try {
+        const res = await apiFetch(`/api/social/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          setSocialPosts(prev => {
+            const updated = prev.filter(p => p.id !== id && (p as any)._id !== id);
+            setCache('socialPosts', updated);
+            return updated;
+          });
+          return true;
+        }
+      } catch { /* fall through */ }
+    }
+    setSocialPosts(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      setCache('socialPosts', updated);
+      return updated;
+    });
+    return true;
+  }, [apiAvailable]);
+
+  return { socialPosts, setSocialPosts, loading, apiAvailable, addPost, updatePost, deletePost, refetch: fetchPosts };
 }
 
 // ========================================================

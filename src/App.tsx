@@ -26,7 +26,8 @@ import {
   Webhook,
   Code2,
   Check,
-  Users
+  Users,
+  Trash2
 } from 'lucide-react';
 import './App.css';
 import type { 
@@ -88,10 +89,10 @@ const SocialBrandIcon = ({ platform }: { platform: string }) => {
 
 export default function App() {
   // State (Syncs with VPS API)
-  const { team, setTeam } = useTeam();
-  const { clients, setClients } = useClients();
-  const { jobs, setJobs } = useJobs();
-  const { socialPosts, setSocialPosts } = useSocialPosts();
+  const { team, setTeam, deleteTeamMember } = useTeam();
+  const { clients, setClients, deleteClient } = useClients();
+  const { jobs, setJobs, deleteJob } = useJobs();
+  const { socialPosts, setSocialPosts, deletePost } = useSocialPosts();
 
   // Auth & Workstation
   const { currentUser, login, logout, error, loading: authLoading } = useAuth();
@@ -223,6 +224,16 @@ export default function App() {
     triggerAlert(`Task moved to: ${nextStage.toUpperCase()} by ${currentUser?.name.split(' ')[0]}`);
     if (showJobDetailModal && showJobDetailModal.id === jobId) {
       setShowJobDetailModal((prev) => (prev ? { ...prev, stage: nextStage } : null));
+    }
+  };
+
+  const confirmAndDelete = async (type: string, id: string, deleteFn: (id: string) => Promise<boolean>) => {
+    if (window.confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) {
+      await deleteFn(id);
+      triggerAlert(`${type} deleted successfully.`);
+      if (type === 'Job' && showJobDetailModal?.id === id) {
+        setShowJobDetailModal(null);
+      }
     }
   };
 
@@ -1480,6 +1491,15 @@ export default function App() {
                           >
                             <span>Track Workload →</span>
                           </button>
+                          {isManagerOrOwner && (
+                            <button 
+                              className="btn-secondary" 
+                              style={{ padding: '6px', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                              onClick={() => confirmAndDelete('Team Member', m.id, deleteTeamMember)}
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -1653,6 +1673,13 @@ export default function App() {
                           >
                             API Post Now
                           </button>
+                          {isManagerOrOwner && (
+                            <button className="btn-secondary" style={{ padding: '7px 10px', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                              onClick={() => confirmAndDelete('Social Post', post.id, deletePost)}
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1789,9 +1816,16 @@ export default function App() {
                       </td>
                       <td style={{ minWidth: '140px' }}><strong style={{ fontSize: '0.95rem' }}>{c.completedProjects} / {c.totalProjects}</strong></td>
                       <td style={{ minWidth: '120px' }}>
-                        <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.76rem', whiteSpace: 'nowrap' }} onClick={() => triggerAlert(`Copied standard 3-Account folder paths for ${c.name}.`)}>
-                          Copy Paths
-                        </button>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.76rem', whiteSpace: 'nowrap' }} onClick={() => triggerAlert(`Copied standard 3-Account folder paths for ${c.name}.`)}>
+                            Copy Paths
+                          </button>
+                          {isManagerOrOwner && (
+                            <button className="btn-secondary" style={{ padding: '6px', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }} onClick={() => confirmAndDelete('Client', c.id, deleteClient)}>
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -2172,6 +2206,13 @@ export default function App() {
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button className="btn-secondary" onClick={() => setShowJobDetailModal(null)}>Close</button>
+                {isManagerOrOwner && (
+                  <button className="btn-secondary" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)' }}
+                    onClick={() => confirmAndDelete('Job', showJobDetailModal.id, deleteJob)}
+                  >
+                    <Trash2 size={16} /> Delete
+                  </button>
+                )}
                 {showJobDetailModal.stage !== 'delivered' && (
                   <button 
                     className="btn-primary" 

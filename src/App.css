@@ -323,41 +323,105 @@
 @media (max-width: 768px) {
   .app-shell {
     flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
+    height: 100dvh;
+    padding-bottom: 70px; /* Space for bottom nav */
   }
+
+  /* Transform Sidebar into Bottom Navigation Tab Bar */
   .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: auto;
-    padding: 14px;
+    height: 70px;
+    padding: 0 10px;
     border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-  .sidebar-nav {
+    border-top: 1px solid var(--border-subtle);
+    background: rgba(11, 13, 19, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
     flex-direction: row;
-    flex-wrap: wrap;
-    margin-top: 12px;
+    align-items: center;
+    justify-content: space-around;
   }
+
+  .sidebar-brand {
+    display: none; /* Hide logo on mobile bottom bar */
+  }
+
+  .sidebar-user-card {
+    display: none; /* Hide profile card on mobile bottom bar */
+  }
+
+  .sidebar-nav {
+    margin-top: 0;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    gap: 0;
+  }
+
   .nav-item {
-    padding: 8px 12px;
-    font-size: 0.82rem;
+    flex-direction: column;
+    padding: 6px;
+    font-size: 0.65rem;
+    gap: 4px;
+    flex: 1;
+    text-align: center;
+    border-radius: 8px;
   }
+
+  .nav-item div {
+    flex-direction: column;
+    gap: 2px !important;
+  }
+
+  .nav-item span {
+    font-size: 0.6rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-item.active {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: var(--accent-gold);
+  }
+
+  .nav-item.active svg {
+    filter: drop-shadow(0 0 8px rgba(226, 183, 20, 0.5));
+  }
+
+  /* Main Viewport Adjustments */
   .main-viewport {
-    height: auto;
-    overflow: visible;
+    height: calc(100dvh - 70px);
   }
+
   .top-header {
     flex-direction: column;
     height: auto;
-    padding: 14px;
+    padding: 16px;
     gap: 12px;
     align-items: flex-start;
   }
+
+  .viewport-content {
+    padding: 16px;
+  }
+
   .dashboard-kpi-grid {
     grid-template-columns: 1fr;
   }
+
+  .dashboard-split-layout {
+    grid-template-columns: 1fr;
+  }
+
   .clean-table th, .clean-table td {
-    padding: 10px 12px;
+    padding: 10px;
     font-size: 0.8rem;
   }
 }
