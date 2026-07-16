@@ -331,3 +331,43 @@ export function useSocialPosts() {
 
   return { socialPosts, setSocialPosts, loading, apiAvailable, addPost, updatePost, refetch: fetchPosts };
 }
+
+// ========================================================
+// useAuth — Fetch & manage authentication
+// ========================================================
+export function useAuth() {
+  const [currentUser, setCurrentUser] = useState<TeamMember | null>(getCached('currentUser', null));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const login = useCallback(async (pin: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await apiFetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ pin })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('dpinside_token', data.token);
+        setCache('currentUser', data.user);
+        setCurrentUser(data.user);
+      } else {
+        setError(data.error || 'Invalid PIN');
+      }
+    } catch (err) {
+      setError('Network error connecting to API');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('dpinside_token');
+    localStorage.removeItem('dpinside_currentUser');
+    setCurrentUser(null);
+  }, []);
+
+  return { currentUser, login, logout, loading, error };
+}

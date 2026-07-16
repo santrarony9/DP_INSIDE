@@ -41,6 +41,8 @@ import {
   INITIAL_JOBS, 
   INITIAL_SOCIAL_POSTS 
 } from './data/mockData';
+import LoginScreen from './components/LoginScreen';
+import { useAuth } from './hooks';
 
 const STAGES: { id: PipelineStage; title: string; color: string }[] = [
   { id: 'footage-received', title: '1. Footage Received', color: '#8b5cf6' },
@@ -91,7 +93,7 @@ export default function App() {
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>(INITIAL_SOCIAL_POSTS);
 
   // Auth & Workstation
-  const [currentUser, setCurrentUser] = useState<TeamMember>(INITIAL_TEAM[0]);
+  const { currentUser, logout, loading: authLoading } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const [loginPinInput, setLoginPinInput] = useState<string>('');
   const [targetLoginMember, setTargetLoginMember] = useState<TeamMember | null>(null);
@@ -200,19 +202,10 @@ export default function App() {
     }, 4000);
   };
 
-  const isManagerOrOwner = currentUser.roleType === 'owner' || currentUser.roleType === 'manager';
+  const isManagerOrOwner = currentUser?.roleType === 'owner' || currentUser?.roleType === 'manager';
 
-  const handleEmployeeLogin = (member: TeamMember) => {
-    if (loginPinInput === member.phonePIN || loginPinInput === '1234' || targetLoginMember?.id === member.id) {
-      setCurrentUser(member);
-      setSelectedEmployeeFilter(member.roleType === 'editor' ? member.id : 'all');
-      setShowLoginModal(false);
-      setLoginPinInput('');
-      setTargetLoginMember(null);
-      triggerAlert(`Authenticated Workstation: ${member.avatar} ${member.name} (${member.role}). Auto-filtered to your specific active work.`);
-    } else {
-      triggerAlert(`Incorrect Phone PIN! Please enter ${member.name.split(' ')[0]}'s registered 10-digit mobile number (${member.phonePIN || '1234'}).`);
-    }
+  const handleEmployeeLogin = () => {
+    alert('Please login from the main screen.');
   };
 
   const moveJobStage = (jobId: string, nextStage: PipelineStage) => {
@@ -226,7 +219,7 @@ export default function App() {
         return j;
       })
     );
-    triggerAlert(`Task moved to: ${nextStage.toUpperCase()} by ${currentUser.name.split(' ')[0]}`);
+    triggerAlert(`Task moved to: ${nextStage.toUpperCase()} by ${currentUser?.name.split(' ')[0]}`);
     if (showJobDetailModal && showJobDetailModal.id === jobId) {
       setShowJobDetailModal((prev) => (prev ? { ...prev, stage: nextStage } : null));
     }
@@ -250,7 +243,7 @@ export default function App() {
     if (showJobDetailModal && showJobDetailModal.id === jobId) {
       setShowJobDetailModal((prev) => (prev ? { ...prev, acceptedAt: nowStr, turnaroundClockStatus: 'Accepted & Ticking', stage: prev.stage === 'assigned' ? 'editing' : prev.stage } : null));
     }
-    triggerAlert(`⏰ [Turnaround Clock Started!] Job accepted by ${currentUser.name.split(' ')[0]} at current time (${nowStr}). Target SLA: ${jobs.find(j=>j.id===jobId)?.turnaroundSLA || 48}h.`);
+    triggerAlert(`⏰ [Turnaround Clock Started!] Job accepted by ${currentUser?.name.split(' ')[0]} at current time (${nowStr}). Target SLA: ${jobs.find(j=>j.id===jobId)?.turnaroundSLA || 48}h.`);
   };
 
   const handleEditorSubmitProject = (jobId: string) => {
@@ -263,7 +256,7 @@ export default function App() {
         if (j.id === jobId) {
           const updatedNotes = [
             ...j.notes,
-            `[SUBMITTED BY ${currentUser.name} on ${new Date().toLocaleString()}]: Deliverable Link: ${submissionUrl} | Notes: ${submissionNotes || 'No notes provided.'}`,
+            `[SUBMITTED BY ${currentUser?.name} on ${new Date().toLocaleString()}]: Deliverable Link: ${submissionUrl} | Notes: ${submissionNotes || 'No notes provided.'}`,
             `[Turnaround Clock Completed at ${new Date().toLocaleTimeString()}]: Project closed within SLA window.`
           ];
           return {
@@ -321,7 +314,7 @@ export default function App() {
       clientId: newJobClient,
       stage: 'assigned',
       assignedTo: newJobAssignee,
-      assignedBy: currentUser.id,
+      assignedBy: currentUser?.id || '',
       assignedFreelancerName: newJobAssignee === 'usr-freelance-pool' ? newJobFreelancerTag : undefined,
       estimatedHours: Number(newJobEstimatedHours),
       loggedHours: 0,
@@ -332,7 +325,7 @@ export default function App() {
       dueDate: new Date(Date.now() + 172800000).toISOString().split('T')[0],
       priority: 'normal',
       driveDeliverableLink: 'https://drive.google.com/drive/folders/new-upload',
-      notes: [`[${currentUser.avatar} ${currentUser.name}]: Scoped for ${newJobEstimatedHours}h edit work. Please track active time.`],
+      notes: [`[${currentUser?.avatar} ${currentUser?.name}]: Scoped for ${newJobEstimatedHours}h edit work. Please track active time.`],
       checklist: { rawIngested: true, audioSynced: false, colorGraded: false, clientApproved: false }
     };
     setJobs([newCard, ...jobs]);
@@ -353,7 +346,7 @@ export default function App() {
       status: 'Owner Approved',
       contentCaption: 'Check out our latest release! #DPInside',
       mediaLink: 'https://drive.google.com/file/d/final-render.mp4/view',
-      assignedTo: currentUser.id,
+      assignedTo: currentUser?.id || '',
       thumbnailUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80'
     };
     setSocialPosts([newPost, ...socialPosts]);
@@ -388,7 +381,7 @@ export default function App() {
       clientId: clientId,
       stage: 'assigned',
       assignedTo: newCliAssignee,
-      assignedBy: currentUser.id,
+      assignedBy: currentUser?.id || '',
       estimatedHours: 10,
       loggedHours: 0,
       turnaroundSLA: 48,
@@ -495,6 +488,21 @@ export default function App() {
     return true;
   });
 
+  // ─── HARD LOGIN WALL ────────────────────────────────────
+  if (authLoading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-darkest)', color: 'var(--text-main)' }}>
+        <RefreshCw className="spin" size={24} style={{ marginRight: '12px' }} />
+        <span>Loading StudioOS Workspace...</span>
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return <LoginScreen />;
+  }
+
+  // ─── RENDER DASHBOARD ────────────────────────────────────
   return (
     <div className="app-shell">
       {/* =========================================================================
@@ -590,11 +598,7 @@ export default function App() {
             <button 
               className="btn-secondary" 
               style={{ flex: 1, justifyContent: 'center', padding: '6px', fontSize: '0.75rem' }}
-              onClick={() => {
-                setTargetLoginMember(null);
-                setLoginPinInput('1234');
-                setShowLoginModal(true);
-              }}
+              onClick={() => logout()}
             >
               <KeyRound size={13} />
               <span>Switch Seat</span>
@@ -603,11 +607,7 @@ export default function App() {
               className="btn-secondary"
               title="Lock Workstation"
               style={{ padding: '6px 10px' }}
-              onClick={() => {
-                setCurrentUser(INITIAL_TEAM[4]); // default to idle
-                setShowLoginModal(true);
-                triggerAlert('Workstation locked.');
-              }}
+              onClick={() => logout()}
             >
               <LogOut size={13} color="#fb7185" />
             </button>
@@ -1854,7 +1854,7 @@ export default function App() {
                       placeholder="Enter 10-digit phone number..."
                       style={{ letterSpacing: '0.2em', fontWeight: 700, fontSize: '0.9rem' }}
                     />
-                    <button className="btn-primary" onClick={() => handleEmployeeLogin(targetLoginMember)}>Verify & Login</button>
+                    <button className="btn-primary" onClick={() => handleEmployeeLogin()}>Verify & Login</button>
                   </div>
                 </div>
               )}

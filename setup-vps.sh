@@ -56,23 +56,13 @@ systemctl enable nginx
 echo "   ✅ Nginx installed and running."
 
 # ---------------------------------------------------
-# STEP 4: CLONE REPO & INSTALL DEPENDENCIES
+# STEP 4: INSTALL DEPENDENCIES IN UPLOADED FOLDER
 # ---------------------------------------------------
-echo "[4/7] Cloning repository and installing dependencies..."
+echo "[4/7] Installing dependencies in uploaded directory..."
 
-APP_DIR="/opt/dpinside"
-mkdir -p $APP_DIR
-
-if [ -d "$APP_DIR/DP_INSIDE" ]; then
-    cd "$APP_DIR/DP_INSIDE"
-    git pull origin main
-else
-    cd $APP_DIR
-    git clone https://github.com/santrarony9/DP_INSIDE.git
-    cd "$APP_DIR/DP_INSIDE"
-fi
-
-cd server
+APP_DIR="/opt/dpinside/DP_INSIDE"
+mkdir -p "$APP_DIR/server"
+cd "$APP_DIR/server"
 npm install > /dev/null 2>&1
 echo "   ✅ Dependencies installed."
 
