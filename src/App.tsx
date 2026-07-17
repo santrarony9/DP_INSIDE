@@ -91,10 +91,10 @@ const SocialBrandIcon = ({ platform }: { platform: string }) => {
 
 export default function App() {
   // State (Syncs with VPS API)
-  const { team, setTeam, deleteTeamMember, addTeamMember, updateTeamMember } = useTeam();
-  const { clients, setClients, deleteClient, addClient } = useClients();
+  const { team, deleteTeamMember, addTeamMember, updateTeamMember } = useTeam();
+  const { clients, deleteClient, addClient } = useClients();
   const { jobs, setJobs, deleteJob, addJob, updateJob } = useJobs();
-  const { socialPosts, setSocialPosts, deletePost, addPost } = useSocialPosts();
+  const { socialPosts, deletePost, addPost, updatePost } = useSocialPosts();
 
   // Auth & Workstation
   const { currentUser, login, logout, error, loading: authLoading } = useAuth();
@@ -402,7 +402,7 @@ export default function App() {
     triggerAlert(`Job "${newJobTitle}" created & added to Unassigned Queue.`);
   };
 
-  const handleCreateSocial = (e: React.FormEvent) => {
+  const handleCreateSocial = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPostTitle) return;
     const newPost: SocialPost = {
@@ -423,7 +423,7 @@ export default function App() {
     triggerAlert(`Scheduled ${newPostPlatform} post successfully.`);
   };
 
-  const handleAddClient = (e: React.FormEvent) => {
+  const handleAddClient = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCliName) return;
     const clientId = `cli-${Date.now()}`;
@@ -470,7 +470,7 @@ export default function App() {
     triggerAlert(`Project "${newCliName}" created & assigned. Saved to: [${newCliStorageType.toUpperCase()}] ${newCliStoragePath}`);
   };
 
-  const handleAddEmployee = (e: React.FormEvent) => {
+  const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEmpName) return;
     const newEmp: TeamMember = {
@@ -497,7 +497,7 @@ export default function App() {
   };
 
   // Execute API / Webhook Publish Simulation
-  const handleTriggerSocialApi = (post: SocialPost) => {
+  const handleTriggerSocialApi = async (post: SocialPost) => {
     const client = clients.find((c) => c.id === post.clientId);
     const payload = {
       apiProvider: apiProvider.toUpperCase(),
@@ -709,14 +709,14 @@ export default function App() {
               {activeTab === 'overview' && 'EXECUTIVE STUDIO OVERVIEW'}
               {activeTab === 'kanban' && 'TURNAROUND KANBAN • 15-DAY EDIT PIPELINE'}
               {activeTab === 'monitoring' && 'EMPLOYEE AUDIT TRAIL'}
-              {activeTab === 'social' && 'MULTI-CLIENT SOCIAL CONTENT CALENDAR'}
+              {activeTab === 'social' && 'SOCIAL CONTENT CALENDAR'}
               {activeTab === 'clients' && 'CENTRALIZED CLIENT & CLOUD STORAGE MATRIX'}
               {activeTab === 'resource-calendar' && 'TEAM WORKLOAD & RESOURCE CALENDAR'}
             </h2>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
               {activeTab === 'overview' && 'Real-time production metrics, active studio workload & financial highlights.'}
               {activeTab === 'kanban' && 'End-to-end 15-day SLA delivery board across internal PCs and contractor pool.'}
-              {activeTab === 'monitoring' && 'DPDPA 2023 & IT Act 2000 compliant workstation proof-of-work tracking.'}
+
               {activeTab === 'social' && 'Automated cross-platform publishing schedule & client content calendar.'}
               {activeTab === 'clients' && 'Standardized 3-account 15TB cloud folder hierarchy & project routing.'}
               {activeTab === 'resource-calendar' && 'Live capacity tracking, project days active, and idle resource identification.'}
@@ -1138,7 +1138,7 @@ export default function App() {
               {/* Dedicated Kanban Filter & Action Bar */}
               <div className="tab-action-bar">
                 <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)' }}>🎯 FILTER PIPELINE BY WORKSTATION SEAT:</span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)' }}>🎯 FILTER PIPELINE:</span>
                   <select 
                     value={selectedEmployeeFilter} 
                     onChange={(e) => setSelectedEmployeeFilter(e.target.value)}
@@ -1406,14 +1406,14 @@ export default function App() {
                     style={{ background: 'linear-gradient(135deg, #eab308, #f59e0b)', color: '#000', fontWeight: 800, padding: '8px 16px', fontSize: '0.82rem' }} 
                     onClick={() => setShowWorkstationConfigModal(true)}
                   >
-                    <span>⚡ Configure PC / Mac (`One-Time Setup`)</span>
+                    <span>⚡ Configure Devices</span>
                   </button>
                   <button className="btn-secondary" onClick={() => triggerAlert('Generated payroll audit CSV.')} style={{ padding: '8px 14px', fontSize: '0.82rem' }}>
                     <FileCheck size={15} color="var(--accent-gold)" />
                     <span>Export Payroll CSV</span>
                   </button>
                   <button className="btn-primary" onClick={() => setShowAddEmployeeModal(true)} style={{ padding: '8px 16px', fontSize: '0.82rem' }}>
-                    <span>+ Add Core Staff (`PC Seat`)</span>
+                    <span>+ Add Staff</span>
                   </button>
                 </div>
               </div>
@@ -1421,7 +1421,7 @@ export default function App() {
               {/* Dedicated Employee Audit Filter Bar */}
               <div className="tab-action-bar" style={{ marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)' }}>🔍 FILTER ROSTER SEATS:</span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)' }}>🔍 FILTER ROSTER:</span>
                   <select 
                     value={selectedEmployeeFilter} 
                     onChange={(e) => setSelectedEmployeeFilter(e.target.value)}
@@ -1478,7 +1478,7 @@ export default function App() {
                     <th>Workstation Employee</th>
                     <th>Status</th>
                     <th>Active Projects</th>
-                    <th>Software Breakdown (`Proof of Work`)</th>
+                    <th>Software Breakdown</th>
                     <th>Audit Action</th>
                   </tr>
                 </thead>
@@ -1652,7 +1652,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '14px' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>UNIFIED MULTI-CLIENT SOCIAL CONTENT CALENDAR</h3>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>SOCIAL CONTENT CALENDAR</h3>
                     <span className="badge badge-cyan" style={{ fontSize: '0.7rem' }}>Connected via {apiProvider.toUpperCase()}</span>
                   </div>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Auto-publish across FB, Insta Reels & YouTube directly to client accounts via <strong>SocialPilot API / Webhooks</strong></p>
@@ -1749,7 +1749,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>15TB MULTI-ACCOUNT GOOGLE DRIVE VAULT & CRM</h3>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>DRIVE VAULT & CRM</h3>
                     <span className="badge badge-cyan" style={{ fontSize: '0.72rem' }}>3 Accounts • 5TB Each Connected</span>
                   </div>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -1825,7 +1825,7 @@ export default function App() {
               </div>
 
               <div style={{ marginBottom: '14px', borderTop: '1px solid var(--border-subtle)', paddingTop: '20px' }}>
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>CLIENT FOLDER MATRIX (AUTOMATIC 3-ACCOUNT ROUTING)</h4>
+                <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>CLIENT FOLDERS</h4>
               </div>
 
               <div style={{ overflowX: 'auto' }}>
@@ -1834,7 +1834,7 @@ export default function App() {
                   <tr>
                     <th>Client & Production Code</th>
                     <th>Category</th>
-                    <th>Multi-Account Cloud Storage Routing (`15TB Hub`)</th>
+                    <th>Cloud Storage</th>
                     <th>Shoots Completed</th>
                     <th>Actions</th>
                   </tr>
@@ -1898,14 +1898,14 @@ export default function App() {
             <div className="modal-header">
               <div>
                 <span className="badge badge-gold" style={{ marginBottom: '4px' }}>Workstation Authentication</span>
-                <h3 style={{ fontSize: '1.15rem' }}>Multi-Employee Login System (`RBAC`)</h3>
+                <h3 style={{ fontSize: '1.15rem' }}>Login System</h3>
               </div>
               <button className="btn-secondary" onClick={() => setShowLoginModal(false)}>✕</button>
             </div>
 
             <div className="modal-body">
               <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                Select a workstation account to simulate logging in with full Role-Based Access Control (`RBAC`) protection:
+                Select an account to log in:
               </p>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
@@ -1943,7 +1943,7 @@ export default function App() {
                 <div style={{ background: 'var(--bg-dark)', padding: '14px', borderRadius: '12px', border: '1px solid var(--accent-gold)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.88rem', fontWeight: 700, flexWrap: 'wrap', gap: '8px' }}>
                     <span>🔐 Login as: {targetLoginMember.name}</span>
-                    <span className="badge badge-cyan" style={{ fontSize: '0.72rem' }}>Phone Password (`PIN`): {targetLoginMember.phonePIN || '1234'}</span>
+                    <span className="badge badge-cyan" style={{ fontSize: '0.72rem' }}>Phone PIN: {targetLoginMember.phonePIN || '1234'}</span>
                   </div>
                   <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
                     Enter your 10-digit registered mobile phone number (`or use demo pre-filled PIN below`) to authenticate this workstation:
@@ -1975,7 +1975,7 @@ export default function App() {
             <div className="modal-header">
               <div>
                 <span className="badge badge-cyan" style={{ marginBottom: '4px' }}>MULTI-ACCOUNT API CONNECTOR</span>
-                <h3 style={{ fontSize: '1.15rem' }}>SocialPilot / Ayrshare / Webhook API Configuration</h3>
+                <h3 style={{ fontSize: '1.15rem' }}>API Configuration</h3>
               </div>
               <button className="btn-secondary" onClick={() => setShowApiConfigModal(false)}>✕</button>
             </div>
@@ -2130,7 +2130,7 @@ export default function App() {
                   <div>
                     <div style={{ color: '#34d399', fontWeight: 800, fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <Clock size={16} />
-                      <span>⏳ SLA TURNAROUND CLOCK IS TICKING</span>
+                      <span>⏳ Turnaround Clock Active</span>
                     </div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '4px' }}>
                       Accepted & Started at: <strong style={{ color: '#fff' }}>{showJobDetailModal.acceptedAt}</strong> (Target SLA: {showJobDetailModal.turnaroundSLA}h)
@@ -2142,14 +2142,14 @@ export default function App() {
                 <div style={{ background: 'rgba(6, 182, 212, 0.15)', border: '1px solid rgba(6, 182, 212, 0.4)', borderRadius: '10px', padding: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CheckCircle size={18} color="#67e8f9" />
                   <div>
-                    <div style={{ color: '#67e8f9', fontWeight: 800, fontSize: '0.9rem' }}>✅ TURNAROUND SLA COMPLETED & SUBMITTED</div>
+                    <div style={{ color: '#67e8f9', fontWeight: 800, fontSize: '0.9rem' }}>✅ SLA Completed & Submitted</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.76rem', marginTop: '2px' }}>Final deliverable pushed to review queue.</div>
                   </div>
                 </div>
               ) : showJobDetailModal.stage !== 'delivered' ? (
                 <div style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(245, 158, 11, 0.08))', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '10px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
-                    <div style={{ color: '#34d399', fontWeight: 800, fontSize: '0.92rem' }}>Ready to Start This Assignment?</div>
+                    <div style={{ color: '#34d399', fontWeight: 800, fontSize: '0.92rem' }}>Start Assignment?</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '4px' }}>
                       Clicking Accept records your current exact start time ({new Date().toLocaleTimeString()}) and begins your {showJobDetailModal.turnaroundSLA}h turnaround clock.
                     </div>
@@ -2173,14 +2173,14 @@ export default function App() {
                     }}
                   >
                     <Play size={14} fill="#fff" />
-                    <span>✅ Accept Job & Start Turnaround Clock</span>
+                    <span>✅ Accept Job</span>
                   </button>
                 </div>
               ) : null}
 
               {/* Handoff Resources & Cloud Links */}
               <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '12px' }}>
-                <h4 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '8px', color: 'var(--accent-gold)' }}>PRODUCTION ASSETS & HANDOFF LINKS</h4>
+                <h4 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '8px', color: 'var(--accent-gold)' }}>PRODUCTION ASSETS</h4>
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', fontSize: '0.8rem' }}>
                   <a href={showJobDetailModal.driveDeliverableLink || driveUrl1} target="_blank" rel="noreferrer" style={{ color: '#67e8f9', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <ExternalLink size={14} /> Open Master Raw Dump (`Drive #1`)
@@ -2194,7 +2194,7 @@ export default function App() {
               {/* Manager Assignment Block for Unassigned Jobs */}
               {isManagerOrOwner && showJobDetailModal.stage === 'unassigned' && (
                 <div style={{ background: 'rgba(6, 182, 212, 0.1)', border: '1px solid #06b6d4', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
-                  <h4 style={{ color: '#06b6d4', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Assign this Project to an Editor:</h4>
+                  <h4 style={{ color: '#06b6d4', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Assign Project:</h4>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <select 
                       className="input-field" 
@@ -2269,7 +2269,7 @@ export default function App() {
                 <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '12px', padding: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                     <CheckCircle2 size={18} color="#34d399" />
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#34d399' }}>DELIVERABLE SUBMISSION & HANDOFF PORTAL</h4>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#34d399' }}>DELIVERABLE SUBMISSION PORTAL</h4>
                   </div>
                   <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
                     When you finish this edit, paste your final 4K export or review link below. Submitting pushes the task to <strong>Client Review</strong> and notifies the Production Manager!
@@ -2310,7 +2310,7 @@ export default function App() {
 
               {/* Audit Trail & Notes */}
               <div>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-muted)' }}>PRODUCTION LOG & SUBMISSION HISTORY</h4>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-muted)' }}>PRODUCTION LOG</h4>
                 <div style={{ background: 'var(--bg-dark)', borderRadius: '8px', padding: '10px', maxHeight: '120px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.78rem' }}>
                   {showJobDetailModal.notes.map((n, i) => (
                     <div key={i} style={{ padding: '4px 0', borderBottom: i < showJobDetailModal.notes.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
@@ -2388,7 +2388,7 @@ export default function App() {
         <div className="modal-overlay" onClick={() => setShowAddFreelancerModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3 style={{ fontSize: '1.15rem' }}>ADD NEW CONTRACTOR TO FREELANCE POOL</h3>
+              <h3 style={{ fontSize: '1.15rem' }}>ADD CONTRACTOR</h3>
               <button className="btn-secondary" onClick={() => setShowAddFreelancerModal(false)}>✕</button>
             </div>
             <form onSubmit={handleAddFreelancerToPool}>
@@ -2458,7 +2458,7 @@ export default function App() {
             <div className="modal-header">
               <div>
                 <span className="badge badge-gold" style={{ marginBottom: '4px' }}>Clean Production Onboarding</span>
-                <h3 style={{ fontSize: '1.2rem' }}>+ Add New Client & Project Assignment</h3>
+                <h3 style={{ fontSize: '1.2rem' }}>+ Add Client & Project</h3>
               </div>
               <button className="btn-secondary" onClick={() => setShowAddClientModal(false)}>✕</button>
             </div>
@@ -2541,7 +2541,7 @@ export default function App() {
             <div className="modal-header">
               <div>
                 <span className="badge badge-cyan" style={{ marginBottom: '4px' }}>Workstation Roster</span>
-                <h3 style={{ fontSize: '1.2rem' }}>+ Add Core Staff (`Internal PC Seat`)</h3>
+                <h3 style={{ fontSize: '1.2rem' }}>+ Add Staff</h3>
               </div>
               <button className="btn-secondary" onClick={() => setShowAddEmployeeModal(false)}>✕</button>
             </div>
@@ -2576,7 +2576,7 @@ export default function App() {
             <div className="modal-header">
               <div>
                 <span className="badge badge-cyan" style={{ marginBottom: '4px' }}>15TB Cloud Matrix Hub</span>
-                <h3 style={{ fontSize: '1.2rem' }}>Connect & Manage Google Drive 5TB Accounts</h3>
+                <h3 style={{ fontSize: '1.2rem' }}>Manage Drive Accounts</h3>
               </div>
               <button className="btn-secondary" onClick={() => setShowDriveConfigModal(false)}>✕</button>
             </div>
