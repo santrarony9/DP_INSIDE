@@ -991,18 +991,20 @@ export default function App() {
                         )}
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto' }}>
-                        {myNotifications.slice(0, 10).map(n => (
+                        {myNotifications.slice(0, 10).map(n => {
+                          const isRead = dismissedNotifIds.includes(n.id);
+                          return (
                           <div key={n.id} style={{ 
                             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                             padding: '8px 12px', borderRadius: '8px', fontSize: '0.82rem',
-                            background: n.read ? 'rgba(255,255,255,0.02)' : 'rgba(251, 191, 36, 0.1)',
-                            border: `1px solid ${n.read ? 'transparent' : 'rgba(251, 191, 36, 0.15)'}`,
-                            fontWeight: n.read ? 400 : 600
+                            background: isRead ? 'rgba(255,255,255,0.02)' : 'rgba(251, 191, 36, 0.1)',
+                            border: `1px solid ${isRead ? 'transparent' : 'rgba(251, 191, 36, 0.15)'}`,
+                            fontWeight: isRead ? 400 : 600
                           }}>
-                            <span style={{ color: n.read ? 'var(--text-muted)' : 'var(--text-main)' }}>{n.message}</span>
+                            <span style={{ color: isRead ? 'var(--text-muted)' : 'var(--text-main)' }}>{n.message}</span>
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', whiteSpace: 'nowrap', marginLeft: '12px' }}>{n.time}</span>
                           </div>
-                        ))}
+                        )})}
                       </div>
                     </div>
                   )}
