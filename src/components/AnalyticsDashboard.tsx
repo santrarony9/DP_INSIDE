@@ -52,10 +52,10 @@ const AnalyticsDashboard = ({ team, jobs }: AnalyticsDashboardProps) => {
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px' }}>Hard data on project completion rates, SLA breaches, and efficiency.</p>
         </div>
         <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '10px 16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <TrendingUp color="#34d399" size={20} />
+          <TrendingUp color="#16a34a" size={20} />
           <div>
             <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Studio Overall Completion</div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#34d399' }}>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#16a34a' }}>
               {jobs.filter(j => j.stage === 'delivered').length} / {jobs.length} Projects
             </div>
           </div>
@@ -74,7 +74,7 @@ const AnalyticsDashboard = ({ team, jobs }: AnalyticsDashboardProps) => {
               boxShadow: isStruggling ? '0 0 15px rgba(239, 68, 68, 0.1)' : 'none'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '1.5rem', background: 'rgba(255,255,255,0.05)', padding: '10px', borderRadius: '12px' }}>{emp.avatar}</span>
+                <span style={{ fontSize: '1.5rem', background: 'rgba(0,0,0,0.05)', padding: '10px', borderRadius: '12px' }}>{emp.avatar}</span>
                 <div>
                   <h4 style={{ fontSize: '1.1rem', fontWeight: 800 }}>{emp.name}</h4>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{emp.role}</div>
@@ -82,20 +82,20 @@ const AnalyticsDashboard = ({ team, jobs }: AnalyticsDashboardProps) => {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '8px' }}>
+                <div style={{ background: 'rgba(0,0,0,0.05)', padding: '12px', borderRadius: '8px' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <CheckCircle size={12} color="#34d399" /> Delivered
+                    <CheckCircle size={12} color="#16a34a" /> Delivered
                   </div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', marginTop: '4px' }}>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '4px' }}>
                     {metrics.totalCompleted} <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontWeight: 500 }}>/ {metrics.totalAssigned}</span>
                   </div>
                 </div>
 
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '8px' }}>
+                <div style={{ background: 'rgba(0,0,0,0.05)', padding: '12px', borderRadius: '8px' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Clock size={12} color="#67e8f9" /> Efficiency
+                    <Clock size={12} color="#0284c7" /> Efficiency
                   </div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: metrics.efficiencyRatio >= 100 ? '#34d399' : '#f59e0b', marginTop: '4px' }}>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: metrics.efficiencyRatio >= 100 ? '#16a34a' : '#d97706', marginTop: '4px' }}>
                     {metrics.totalCompleted === 0 ? 'N/A' : `${metrics.efficiencyRatio}%`}
                   </div>
                 </div>
@@ -103,17 +103,17 @@ const AnalyticsDashboard = ({ team, jobs }: AnalyticsDashboardProps) => {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(244, 63, 94, 0.08)', padding: '10px', borderRadius: '6px' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#fb7185', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#e11d48', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <AlertTriangle size={14} /> SLA Breaches (Overdue)
                   </span>
-                  <strong style={{ color: '#fb7185' }}>{metrics.slaBreaches}</strong>
+                  <strong style={{ color: '#e11d48' }}>{metrics.slaBreaches}</strong>
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '6px' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#dc2626', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <BarChart3 size={14} /> Cancellation Requests
                   </span>
-                  <strong style={{ color: '#ef4444' }}>{metrics.cancellationCount}</strong>
+                  <strong style={{ color: '#dc2626' }}>{metrics.cancellationCount}</strong>
                 </div>
               </div>
             </div>

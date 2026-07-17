@@ -24,7 +24,7 @@ export default function LoginScreen({ onLogin, loading, authError }: LoginScreen
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: 'var(--bg-darkest)',
+      backgroundColor: 'var(--bg-surface)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -39,7 +39,7 @@ export default function LoginScreen({ onLogin, loading, authError }: LoginScreen
         border: '1px solid var(--border-subtle)',
         borderRadius: '24px',
         padding: '40px 32px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05)'
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0,0,0,0.05)'
       }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{
@@ -56,7 +56,7 @@ export default function LoginScreen({ onLogin, loading, authError }: LoginScreen
           }}>
             <Lock size={32} />
           </div>
-          <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px', color: '#ffffff' }}>DP Inside StudioOS</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px', color: 'var(--text-main)' }}>DP Inside StudioOS</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Enter your PIN to access the workstation</p>
         </div>
 

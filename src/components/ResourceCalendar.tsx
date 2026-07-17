@@ -42,12 +42,12 @@ export default function ResourceCalendar({ team, jobs }: ResourceCalendarProps) 
           </div>
         </div>
         <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '16px', border: '1px solid rgba(16, 185, 129, 0.3)', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(0,0,0,0) 100%)' }}>
-          <div className="icon-badge" style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>
+          <div className="icon-badge" style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#16a34a' }}>
             <CheckCircle2 size={20} />
           </div>
           <div>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Idle & Ready for Work</p>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#10b981' }}>{idleWorkers.length} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>Available</span></h3>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#16a34a' }}>{idleWorkers.length} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>Available</span></h3>
           </div>
         </div>
       </div>
@@ -88,24 +88,24 @@ export default function ResourceCalendar({ team, jobs }: ResourceCalendarProps) 
                         width: '40px', 
                         height: '40px', 
                         borderRadius: '8px', 
-                        backgroundColor: activeJob ? 'var(--bg-darkest)' : 'rgba(16, 185, 129, 0.2)',
-                        color: activeJob ? 'var(--text-main)' : '#10b981',
+                        backgroundColor: activeJob ? 'var(--bg-surface)' : 'rgba(16, 185, 129, 0.2)',
+                        color: activeJob ? 'var(--text-main)' : '#16a34a',
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center',
                         fontWeight: 700,
-                        border: '1px solid rgba(255,255,255,0.05)'
+                        border: '1px solid rgba(0,0,0,0.05)'
                       }}>
                         {worker.avatar}
                       </div>
                       <div>
-                        <p style={{ fontWeight: 600, fontSize: '0.95rem', color: activeJob ? 'var(--text-main)' : '#10b981' }}>{worker.name}</p>
+                        <p style={{ fontWeight: 600, fontSize: '0.95rem', color: activeJob ? 'var(--text-main)' : '#16a34a' }}>{worker.name}</p>
                         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{worker.role} • {worker.workstationPC}</p>
                       </div>
                     </div>
 
                     {/* Timeline Track */}
-                    <div style={{ flex: 1, backgroundColor: 'var(--bg-darkest)', height: '48px', borderRadius: '8px', position: 'relative', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ flex: 1, backgroundColor: 'var(--bg-surface)', height: '48px', borderRadius: '8px', position: 'relative', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
                       {activeJob ? (
                         <div style={{ 
                           position: 'absolute', 
@@ -125,7 +125,7 @@ export default function ResourceCalendar({ team, jobs }: ResourceCalendarProps) 
                           </div>
                         </div>
                       ) : (
-                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#10b981' }}>
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#16a34a' }}>
                           <CheckCircle2 size={15} />
                           <span style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.5px' }}>AVAILABLE FOR ASSIGNMENT</span>
                         </div>
