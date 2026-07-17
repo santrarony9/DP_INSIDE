@@ -162,7 +162,7 @@ export default function App() {
   const [newCliName, setNewCliName] = useState('');
   const [newCliStorageType, setNewCliStorageType] = useState<'local' | 'drive'>('drive');
   const [newCliStoragePath, setNewCliStoragePath] = useState('https://drive.google.com/drive/folders/master-raw');
-  const [newCliAssignee, setNewCliAssignee] = useState(INITIAL_TEAM[2].id);
+  const [newCliAssignee, setNewCliAssignee] = useState(INITIAL_TEAM[0]?.id || '');
   const [newCliNotes, setNewCliNotes] = useState('Deliver initial 4K cut within 48 hours. Sync lapel mic audio.');
 
 
