@@ -177,40 +177,43 @@ export default function App() {
 
   const [configOsType, setConfigOsType] = useState<'windows' | 'mac'>('windows');
 
-  // Notification System (localStorage-backed)
-  type AppNotification = { id: string; message: string; time: string; read: boolean; forUserId: string };
-  const [notifications, setNotifications] = useState<AppNotification[]>(() => {
+  // Notification System — derived from job data (works cross-device via MongoDB)
+  // Extracts assignment notes from jobs assigned to the current user
+  const myNotifications = React.useMemo(() => {
+    if (!currentUser || !currentUser.id) return [];
+    const myJobs = jobs.filter(j => j.assignedTo === currentUser.id || (j as any).assignedTo === (currentUser as any)._id);
+    const notifs: { id: string; message: string; time: string; jobTitle: string }[] = [];
+    myJobs.forEach(job => {
+      (job.notes || []).forEach((note, idx) => {
+        if (note.includes('[ASSIGNED by') || note.includes('[Assignment Note]')) {
+          notifs.push({
+            id: `${job.id}-note-${idx}`,
+            message: `📋 "${job.title}" — ${note}`,
+            time: job.createdAt || '',
+            jobTitle: job.title
+          });
+        }
+      });
+    });
+    return notifs.slice(0, 15);
+  }, [jobs, currentUser]);
+
+  // Track which notifications the user has dismissed (localStorage per user)
+  const [dismissedNotifIds, setDismissedNotifIds] = useState<string[]>(() => {
     try {
-      const cached = localStorage.getItem('dpinside_notifications');
+      const cached = localStorage.getItem(`dpinside_dismissed_notifs_${currentUser?.id}`);
       return cached ? JSON.parse(cached) : [];
     } catch { return []; }
   });
 
-  const pushNotification = (forUserId: string, message: string) => {
-    const notif: AppNotification = {
-      id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      message,
-      time: new Date().toLocaleString(),
-      read: false,
-      forUserId
-    };
-    setNotifications(prev => {
-      const updated = [notif, ...prev];
-      localStorage.setItem('dpinside_notifications', JSON.stringify(updated));
-      return updated;
-    });
-  };
+  const myUnreadNotifications = myNotifications.filter(n => !dismissedNotifIds.includes(n.id));
+  const myUnreadCount = myUnreadNotifications.length;
 
   const markAllNotificationsRead = () => {
-    setNotifications(prev => {
-      const updated = prev.map(n => n.forUserId === currentUser?.id ? { ...n, read: true } : n);
-      localStorage.setItem('dpinside_notifications', JSON.stringify(updated));
-      return updated;
-    });
+    const allIds = myNotifications.map(n => n.id);
+    setDismissedNotifIds(allIds);
+    localStorage.setItem(`dpinside_dismissed_notifs_${currentUser?.id}`, JSON.stringify(allIds));
   };
-
-  const myNotifications = notifications.filter(n => n.forUserId === currentUser?.id);
-  const myUnreadCount = myNotifications.filter(n => !n.read).length;
 
   useEffect(() => {
     let interval: any = null;
@@ -487,7 +490,7 @@ export default function App() {
     await addClient(newCli);
     await addJob(newJob);
     if (newCliAssignee) {
-      pushNotification(newCliAssignee, `📋 New Project Assigned: "${newCliName} - Main Production Deliverable" — assigned by ${currentUser?.name}. Open your dashboard to review.`);
+      // Notification is now derived from job notes
     }
     setShowAddClientModal(false);
     setNewCliName('');
@@ -610,46 +613,52 @@ export default function App() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <LayoutDashboard size={17} color={activeTab === 'overview' ? 'var(--accent-gold)' : 'inherit'} />
-                <span>Executive Dashboard</span>
+                <span>{isManagerOrOwner ? 'Executive Dashboard' : 'My Dashboard'}</span>
               </div>
               <span className="badge" style={{ background: 'rgba(255,255,255,0.06)' }}>Live</span>
             </button>
 
-            <button 
-              className={`nav-item ${activeTab === 'kanban' ? 'active' : ''}`}
-              onClick={() => setActiveTab('kanban')}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Briefcase size={17} color={activeTab === 'kanban' ? 'var(--accent-gold)' : 'inherit'} />
-                <span>Turnaround Kanban</span>
-              </div>
-              {jobs.some(j => j.isOverdue) ? (
-                <span className="badge badge-urgent">1 Overdue</span>
-              ) : (
-                <span className="badge" style={{ background: 'rgba(255,255,255,0.06)' }}>{jobs.length}</span>
-              )}
-            </button>
+            {isManagerOrOwner && (
+              <button 
+                className={`nav-item ${activeTab === 'kanban' ? 'active' : ''}`}
+                onClick={() => setActiveTab('kanban')}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Briefcase size={17} color={activeTab === 'kanban' ? 'var(--accent-gold)' : 'inherit'} />
+                  <span>Turnaround Kanban</span>
+                </div>
+                {jobs.some(j => j.isOverdue) ? (
+                  <span className="badge badge-urgent">1 Overdue</span>
+                ) : (
+                  <span className="badge" style={{ background: 'rgba(255,255,255,0.06)' }}>{jobs.length}</span>
+                )}
+              </button>
+            )}
 
-            <button 
-              className={`nav-item ${activeTab === 'resource-calendar' ? 'active' : ''}`}
-              onClick={() => setActiveTab('resource-calendar')}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Users size={17} color={activeTab === 'resource-calendar' ? 'var(--accent-gold)' : 'inherit'} />
-                <span>Team Workload</span>
-              </div>
-            </button>
+            {isManagerOrOwner && (
+              <button 
+                className={`nav-item ${activeTab === 'resource-calendar' ? 'active' : ''}`}
+                onClick={() => setActiveTab('resource-calendar')}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Users size={17} color={activeTab === 'resource-calendar' ? 'var(--accent-gold)' : 'inherit'} />
+                  <span>Team Workload</span>
+                </div>
+              </button>
+            )}
 
-            <button 
-              className={`nav-item ${activeTab === 'monitoring' ? 'active' : ''}`}
-              onClick={() => setActiveTab('monitoring')}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Clock size={17} color={activeTab === 'monitoring' ? 'var(--accent-gold)' : 'inherit'} />
-                <span>Employee Audit</span>
-              </div>
-              <span className="badge badge-emerald">6 PCs</span>
-            </button>
+            {isManagerOrOwner && (
+              <button 
+                className={`nav-item ${activeTab === 'monitoring' ? 'active' : ''}`}
+                onClick={() => setActiveTab('monitoring')}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Clock size={17} color={activeTab === 'monitoring' ? 'var(--accent-gold)' : 'inherit'} />
+                  <span>Employee Audit</span>
+                </div>
+                <span className="badge badge-emerald">6 PCs</span>
+              </button>
+            )}
 
             {isManagerOrOwner && (
               <button 
@@ -663,27 +672,31 @@ export default function App() {
               </button>
             )}
 
-            <button 
-              className={`nav-item ${activeTab === 'social' ? 'active' : ''}`}
-              onClick={() => setActiveTab('social')}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Calendar size={17} color={activeTab === 'social' ? 'var(--accent-gold)' : 'inherit'} />
-                <span>Social Calendar</span>
-              </div>
-              <span className="badge badge-cyan">{socialPosts.length}</span>
-            </button>
+            {isManagerOrOwner && (
+              <button 
+                className={`nav-item ${activeTab === 'social' ? 'active' : ''}`}
+                onClick={() => setActiveTab('social')}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Calendar size={17} color={activeTab === 'social' ? 'var(--accent-gold)' : 'inherit'} />
+                  <span>Social Calendar</span>
+                </div>
+                <span className="badge badge-cyan">{socialPosts.length}</span>
+              </button>
+            )}
 
-            <button 
-              className={`nav-item ${activeTab === 'clients' ? 'active' : ''}`}
-              onClick={() => setActiveTab('clients')}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <FolderGit2 size={17} color={activeTab === 'clients' ? 'var(--accent-gold)' : 'inherit'} />
-                <span>Client Cloud Vault</span>
-              </div>
-              <span className="badge badge-gold">{clients.length}</span>
-            </button>
+            {isManagerOrOwner && (
+              <button 
+                className={`nav-item ${activeTab === 'clients' ? 'active' : ''}`}
+                onClick={() => setActiveTab('clients')}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <FolderGit2 size={17} color={activeTab === 'clients' ? 'var(--accent-gold)' : 'inherit'} />
+                  <span>Client Cloud Vault</span>
+                </div>
+                <span className="badge badge-gold">{clients.length}</span>
+              </button>
+            )}
           </nav>
         </div>
 
@@ -730,7 +743,7 @@ export default function App() {
         <header className="top-header">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
-              {activeTab === 'overview' && 'EXECUTIVE STUDIO OVERVIEW'}
+              {activeTab === 'overview' && (isManagerOrOwner ? 'EXECUTIVE STUDIO OVERVIEW' : 'MY DASHBOARD')}
               {activeTab === 'kanban' && 'TURNAROUND KANBAN • 15-DAY EDIT PIPELINE'}
               {activeTab === 'monitoring' && 'EMPLOYEE AUDIT TRAIL'}
               {activeTab === 'social' && 'SOCIAL CONTENT CALENDAR'}
@@ -2328,7 +2341,7 @@ export default function App() {
                             assignedTo: newAssignee,
                             notes: [...showJobDetailModal.notes, `[ASSIGNED by ${currentUser?.name} on ${new Date().toLocaleString()}] to ${team.find(t=>t.id===newAssignee)?.name}`]
                           });
-                          pushNotification(newAssignee, `📋 New Project Assigned: "${showJobDetailModal.title}" — assigned by ${currentUser?.name}. Open your dashboard to review.`);
+                          // Notification is now derived from job notes
                           setShowJobDetailModal(null);
                           triggerAlert('Project assigned successfully.');
                         }
