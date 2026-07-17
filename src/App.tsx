@@ -141,12 +141,12 @@ export default function App() {
 
   // Google Drive Multi-Account Hub (15TB Total Cloud Storage across 3 accounts)
   const [showDriveConfigModal, setShowDriveConfigModal] = useState<boolean>(false);
-  const [driveAccount1, setDriveAccount1] = useState('dpinside.raw@gmail.com');
-  const [driveAccount2, setDriveAccount2] = useState('dpinside.edits@gmail.com');
-  const [driveAccount3, setDriveAccount3] = useState('dpinside.archive@gmail.com');
-  const [driveUrl1, setDriveUrl1] = useState('https://drive.google.com/drive/my-drive');
-  const [driveUrl2, setDriveUrl2] = useState('https://drive.google.com/drive/my-drive');
-  const [driveUrl3, setDriveUrl3] = useState('https://drive.google.com/drive/my-drive');
+  const [driveAccount1, setDriveAccount1] = useState('');
+  const [driveAccount2, setDriveAccount2] = useState('');
+  const [driveAccount3, setDriveAccount3] = useState('');
+  const [driveUrl1, setDriveUrl1] = useState('');
+  const [driveUrl2, setDriveUrl2] = useState('');
+  const [driveUrl3, setDriveUrl3] = useState('');
 
   // Form states for New Social Post
   const [newPostTitle, setNewPostTitle] = useState('');
@@ -2745,7 +2745,7 @@ export default function App() {
                     </button>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '8px' }}>
-                    <input type="text" value={driveAccount1} onChange={(e) => setDriveAccount1(e.target.value)} className="input-field" placeholder="dpinside.raw@gmail.com" />
+                    <input type="text" value={driveAccount1} onChange={(e) => setDriveAccount1(e.target.value)} className="input-field" placeholder="E.g., dpinside.raw@gmail.com" />
                     <input type="text" value={driveUrl1} onChange={(e) => setDriveUrl1(e.target.value)} className="input-field" placeholder="Paste Google Drive Root Folder URL here..." />
                   </div>
                 </div>
@@ -2765,7 +2765,7 @@ export default function App() {
                     </button>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '8px' }}>
-                    <input type="text" value={driveAccount2} onChange={(e) => setDriveAccount2(e.target.value)} className="input-field" placeholder="dpinside.edits@gmail.com" />
+                    <input type="text" value={driveAccount2} onChange={(e) => setDriveAccount2(e.target.value)} className="input-field" placeholder="E.g., dpinside.edits@gmail.com" />
                     <input type="text" value={driveUrl2} onChange={(e) => setDriveUrl2(e.target.value)} className="input-field" placeholder="Paste Google Drive Edits Folder URL here..." />
                   </div>
                 </div>
@@ -2785,7 +2785,7 @@ export default function App() {
                     </button>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '8px' }}>
-                    <input type="text" value={driveAccount3} onChange={(e) => setDriveAccount3(e.target.value)} className="input-field" placeholder="dpinside.archive@gmail.com" />
+                    <input type="text" value={driveAccount3} onChange={(e) => setDriveAccount3(e.target.value)} className="input-field" placeholder="E.g., dpinside.archive@gmail.com" />
                     <input type="text" value={driveUrl3} onChange={(e) => setDriveUrl3(e.target.value)} className="input-field" placeholder="Paste Google Drive Deliverables URL here..." />
                   </div>
                 </div>
