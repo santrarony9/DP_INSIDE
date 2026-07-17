@@ -45,11 +45,11 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 import { useAuth, useTeam, useClients, useJobs, useSocialPosts } from './hooks';
 
 const STAGES: { id: PipelineStage; title: string; color: string }[] = [
-  { id: 'unassigned', title: '0. Unassigned Inbox', color: '#64748b' },
-  { id: 'footage-received', title: '1. Footage Received', color: '#8b5cf6' },
-  { id: 'assigned', title: '2. Assigned to Editor', color: '#06b6d4' },
-  { id: 'editing', title: '3. In Editing (Active)', color: '#f59e0b' },
-  { id: 'review', title: '4. Internal Review', color: '#10b981' },
+  { id: 'unassigned', title: '0. Unassigned Inbox', color: '#475569' },
+  { id: 'footage-received', title: '1. Footage Received', color: '#7c3aed' },
+  { id: 'assigned', title: '2. Assigned to Editor', color: '#0284c7' },
+  { id: 'editing', title: '3. In Editing (Active)', color: '#d97706' },
+  { id: 'review', title: '4. Internal Review', color: '#16a34a' },
   { id: 'revisions', title: '5. Client Revisions', color: '#f43f5e' },
   { id: 'delivered', title: '6. Delivered & Closed', color: '#e2b714' }
 ];
@@ -77,7 +77,7 @@ const SocialBrandIcon = ({ platform }: { platform: string }) => {
     );
   }
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', color: '#ef4444' }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', color: '#dc2626' }}>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
         <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
@@ -733,7 +733,7 @@ export default function App() {
               style={{ padding: '6px 10px' }}
               onClick={() => logout()}
             >
-              <LogOut size={13} color="#fb7185" />
+              <LogOut size={13} color="#e11d48" />
             </button>
           </div>
         </div>
@@ -787,14 +787,14 @@ export default function App() {
               flexWrap: 'wrap',
               gap: '10px',
               background: isTimerRunning ? 'rgba(16, 185, 129, 0.12)' : 'rgba(0,0,0,0.03)',
-              border: `1px solid ${isTimerRunning ? '#34d399' : 'var(--border-subtle)'}`,
+              border: `1px solid ${isTimerRunning ? '#16a34a' : 'var(--border-subtle)'}`,
               borderRadius: '24px',
               padding: '6px 14px',
               boxShadow: isTimerRunning ? '0 0 16px rgba(16, 185, 129, 0.25)' : 'none',
               transition: 'all 0.3s ease'
             }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: isTimerRunning ? '#34d399' : 'var(--accent-gold)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: isTimerRunning ? '#34d399' : 'var(--accent-gold)', display: 'inline-block' }}></span>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: isTimerRunning ? '#16a34a' : 'var(--accent-gold)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: isTimerRunning ? '#16a34a' : 'var(--accent-gold)', display: 'inline-block' }}></span>
                 {isTimerRunning ? 'WORKING LIVE:' : 'EASY CHECK-IN:'}
               </span>
 
@@ -830,7 +830,7 @@ export default function App() {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: isTimerRunning ? '#67e8f9' : 'var(--text-muted)',
+                  color: isTimerRunning ? '#0284c7' : 'var(--text-muted)',
                   fontWeight: 600,
                   fontSize: '0.78rem',
                   maxWidth: '180px',
@@ -848,7 +848,7 @@ export default function App() {
               <span style={{ color: 'var(--border-subtle)' }}>•</span>
 
               {/* Timer Display & 1-Click Action */}
-              <span style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: isTimerRunning ? '#34d399' : 'var(--text-main)', fontWeight: 800 }}>
+              <span style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: isTimerRunning ? '#16a34a' : 'var(--text-main)', fontWeight: 800 }}>
                 {formatSeconds(timerSeconds)}
               </span>
 
@@ -880,7 +880,7 @@ export default function App() {
                   }
                 }}
                 style={{ 
-                  background: isTimerRunning ? '#fb7185' : '#1877f2', 
+                  background: isTimerRunning ? '#e11d48' : '#1877f2', 
                   color: 'var(--text-main)', 
                   border: 'none', 
                   borderRadius: '18px', 
@@ -929,7 +929,7 @@ export default function App() {
             )}
             {activeTab === 'monitoring' && isManagerOrOwner && (
               <button className="btn-secondary" onClick={handleRefreshTeamStats} style={{ padding: '8px 14px' }}>
-                <RefreshCw size={14} color="#34d399" />
+                <RefreshCw size={14} color="#16a34a" />
                 <span>Sync PCs</span>
               </button>
             )}
@@ -1025,7 +1025,7 @@ export default function App() {
                     <div className="kpi-card" style={{ borderColor: jobs.some(j => j.assignedTo === currentUser.id && j.isOverdue) ? 'rgba(244, 63, 94, 0.4)' : 'var(--border-subtle)' }}>
                       <div>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Overdue Projects</span>
-                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: jobs.some(j => j.assignedTo === currentUser.id && j.isOverdue) ? '#fb7185' : '#34d399', marginTop: '6px' }}>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: jobs.some(j => j.assignedTo === currentUser.id && j.isOverdue) ? '#e11d48' : '#16a34a', marginTop: '6px' }}>
                           {jobs.filter(j => j.assignedTo === currentUser.id && j.isOverdue).length} Overdue
                         </div>
                       </div>
@@ -1071,7 +1071,7 @@ export default function App() {
                                     <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{client?.name || 'Unknown'}</div>
                                   </td>
                                   <td>
-                                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: job.loggedHours > job.estimatedHours ? '#fb7185' : '#34d399' }}>
+                                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: job.loggedHours > job.estimatedHours ? '#e11d48' : '#16a34a' }}>
                                       {job.loggedHours}h logged / {job.estimatedHours}h est.
                                     </div>
                                     <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target SLA: {job.turnaroundSLA}h</div>
@@ -1111,7 +1111,7 @@ export default function App() {
                     <div className="kpi-card">
                       <div>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Turnaround SLA Health</span>
-                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#34d399', marginTop: '6px' }}>92.4%</div>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#16a34a', marginTop: '6px' }}>92.4%</div>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                         <span>Target: 48h Avg</span>
@@ -1122,12 +1122,12 @@ export default function App() {
                     <div className="kpi-card" style={{ borderColor: jobs.some(j => j.isOverdue) ? 'rgba(244, 63, 94, 0.4)' : 'var(--border-subtle)' }}>
                       <div>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Overdue Exception Alert</span>
-                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: jobs.some(j => j.isOverdue) ? '#fb7185' : '#34d399', marginTop: '6px' }}>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: jobs.some(j => j.isOverdue) ? '#e11d48' : '#16a34a', marginTop: '6px' }}>
                           {jobs.filter(j => j.isOverdue).length} Task
                         </div>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem' }}>
-                        <span style={{ color: jobs.some(j => j.isOverdue) ? '#fb7185' : 'var(--text-muted)' }}>
+                        <span style={{ color: jobs.some(j => j.isOverdue) ? '#e11d48' : 'var(--text-muted)' }}>
                           {jobs.filter(j => j.isOverdue)[0]?.title.substring(0, 20) || 'All tasks on schedule'}
                         </span>
                         {jobs.some(j => j.isOverdue) && (
@@ -1211,7 +1211,7 @@ export default function App() {
                                   </div>
                                 </td>
                                 <td>
-                                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: job.loggedHours > job.estimatedHours * 2 ? '#fb7185' : '#34d399' }}>
+                                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: job.loggedHours > job.estimatedHours * 2 ? '#e11d48' : '#16a34a' }}>
                                     {job.loggedHours}h / {job.estimatedHours}h
                                   </div>
                                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: {job.turnaroundSLA}h SLA</div>
@@ -1256,7 +1256,7 @@ export default function App() {
 
                       <div style={{ marginTop: '20px', padding: '14px', background: 'rgba(6, 182, 212, 0.08)', borderRadius: '12px', border: '1px solid rgba(6, 182, 212, 0.22)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#67e8f9' }}>CLOUD VAULT MASTER ROOT</span>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0284c7' }}>CLOUD VAULT MASTER ROOT</span>
                           <a href="https://drive.google.com" target="_blank" rel="noreferrer" className="badge badge-cyan" style={{ textDecoration: 'none' }}>Open Drive</a>
                         </div>
                         <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -1291,7 +1291,7 @@ export default function App() {
                       fontWeight: 700,
                       borderColor: selectedEmployeeFilter !== 'all' ? 'var(--accent-gold)' : 'var(--border-subtle)',
                       background: selectedEmployeeFilter !== 'all' ? 'rgba(226, 183, 20, 0.15)' : 'var(--bg-dark)',
-                      color: selectedEmployeeFilter !== 'all' ? '#fcd34d' : 'var(--text-main)'
+                      color: selectedEmployeeFilter !== 'all' ? '#d97706' : 'var(--text-main)'
                     }}
                   >
                     <option value="all">⚡ ALL WORKING EMPLOYEES & CONTRACTORS ({jobs.length} Total Jobs)</option>
@@ -1315,7 +1315,7 @@ export default function App() {
                       type="button"
                       onClick={() => setSelectedEmployeeFilter('all')}
                       className="btn-secondary"
-                      style={{ padding: '6px 12px', fontSize: '0.76rem', borderColor: 'rgba(244, 63, 94, 0.4)', color: '#fb7185' }}
+                      style={{ padding: '6px 12px', fontSize: '0.76rem', borderColor: 'rgba(244, 63, 94, 0.4)', color: '#e11d48' }}
                     >
                       ✕ Reset Filter (`Show All`)
                     </button>
@@ -1370,8 +1370,8 @@ export default function App() {
                             </h3>
                             <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px', flexWrap: 'wrap' }}>
                               <span>Active Project Tagged: <strong style={{ color: 'var(--accent-gold)' }}>{activeProj || 'No active tag right now'}</strong></span>
-                              <span>Total Assigned Tasks: <strong style={{ color: '#67e8f9' }}>{filteredJobs.length} Jobs in Pipeline</strong></span>
-                              <span>Workstation Hours: <strong style={{ color: '#34d399' }}>{wkHours}</strong></span>
+                              <span>Total Assigned Tasks: <strong style={{ color: '#0284c7' }}>{filteredJobs.length} Jobs in Pipeline</strong></span>
+                              <span>Workstation Hours: <strong style={{ color: '#16a34a' }}>{wkHours}</strong></span>
                             </div>
                           </div>
                         </div>
@@ -1415,14 +1415,14 @@ export default function App() {
                             style={{ 
                               padding: '14px', 
                               cursor: 'pointer', 
-                              borderColor: job.cancellationRequested ? '#ef4444' : (job.isOverdue ? 'rgba(244, 63, 94, 0.5)' : 'var(--border-subtle)'),
+                              borderColor: job.cancellationRequested ? '#dc2626' : (job.isOverdue ? 'rgba(244, 63, 94, 0.5)' : 'var(--border-subtle)'),
                               boxShadow: job.cancellationRequested ? '0 0 12px rgba(239, 68, 68, 0.3)' : 'none'
                             }}
                           >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px' }}>
                               <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.25' }}>{job.title}</span>
                               {job.cancellationRequested ? (
-                                <span className="badge" style={{ background: '#ef4444', color: 'var(--text-main)' }}>Cancel Req</span>
+                                <span className="badge" style={{ background: '#dc2626', color: 'var(--text-main)' }}>Cancel Req</span>
                               ) : job.isOverdue ? (
                                 <span className="badge badge-urgent">Overdue</span>
                               ) : null}
@@ -1434,21 +1434,21 @@ export default function App() {
                             </div>
 
                             <div style={{ background: 'rgba(0,0,0,0.3)', padding: '7px 10px', borderRadius: '8px', fontSize: '0.78rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-                              <span>Logged: <strong style={{ color: job.loggedHours > job.estimatedHours * 2 ? '#fb7185' : '#34d399' }}>{job.loggedHours}h</strong></span>
+                              <span>Logged: <strong style={{ color: job.loggedHours > job.estimatedHours * 2 ? '#e11d48' : '#16a34a' }}>{job.loggedHours}h</strong></span>
                               <span>Target: {job.turnaroundSLA}h SLA</span>
                             </div>
 
                             {/* ⏰ TURNAROUND SLA CLOCK FOR ASSIGNED EMPLOYEE */}
                             {job.turnaroundClockStatus === 'Accepted & Ticking' && job.acceptedAt ? (
                               <div style={{ background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.35)', padding: '6px 10px', borderRadius: '8px', marginTop: '8px', fontSize: '0.74rem', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                <div style={{ color: '#34d399', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <div style={{ color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                                   <Clock size={12} />
                                   <span>SLA CLOCK TICKING ('Started: {job.acceptedAt.split(',')[1] || job.acceptedAt}')</span>
                                 </div>
                                 <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem' }}>Target Turnaround: {job.turnaroundSLA} Hours</div>
                               </div>
                             ) : job.turnaroundClockStatus === 'Completed' ? (
-                              <div style={{ background: 'rgba(6, 182, 212, 0.12)', border: '1px solid rgba(6, 182, 212, 0.35)', padding: '6px 10px', borderRadius: '8px', marginTop: '8px', fontSize: '0.74rem', color: '#67e8f9', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <div style={{ background: 'rgba(6, 182, 212, 0.12)', border: '1px solid rgba(6, 182, 212, 0.35)', padding: '6px 10px', borderRadius: '8px', marginTop: '8px', fontSize: '0.74rem', color: '#0284c7', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <CheckCircle size={12} />
                                 <span>Turnaround Completed ('Submitted')</span>
                               </div>
@@ -1491,7 +1491,7 @@ export default function App() {
                                   </span>
                                 </div>
                                 {job.assignedFreelancerName && (
-                                  <div style={{ fontSize: '0.68rem', color: '#67e8f9', fontWeight: 600 }}>
+                                  <div style={{ fontSize: '0.68rem', color: '#0284c7', fontWeight: 600 }}>
                                     Assignee: {job.assignedFreelancerName.split('•')[0]}
                                   </div>
                                 )}
@@ -1499,7 +1499,7 @@ export default function App() {
 
                               <div style={{ display: 'flex', gap: '6px' }} onClick={(e) => e.stopPropagation()}>
                                 {job.driveDeliverableLink && (
-                                  <a href={job.driveDeliverableLink} target="_blank" rel="noreferrer" title="Drive Link" style={{ color: '#06b6d4' }}>
+                                  <a href={job.driveDeliverableLink} target="_blank" rel="noreferrer" title="Drive Link" style={{ color: '#0284c7' }}>
                                     <ExternalLink size={14} />
                                   </a>
                                 )}
@@ -1574,7 +1574,7 @@ export default function App() {
                       fontWeight: 700,
                       borderColor: selectedEmployeeFilter !== 'all' ? 'var(--accent-gold)' : 'var(--border-subtle)',
                       background: selectedEmployeeFilter !== 'all' ? 'rgba(226, 183, 20, 0.15)' : 'var(--bg-dark)',
-                      color: selectedEmployeeFilter !== 'all' ? '#fcd34d' : 'var(--text-main)'
+                      color: selectedEmployeeFilter !== 'all' ? '#d97706' : 'var(--text-main)'
                     }}
                   >
                     <option value="all">⚡ SHOW ALL INTERNAL SEATS & FREELANCERS ({team.length} Total)</option>
@@ -1598,7 +1598,7 @@ export default function App() {
                       type="button"
                       onClick={() => setSelectedEmployeeFilter('all')}
                       className="btn-secondary"
-                      style={{ padding: '6px 12px', fontSize: '0.76rem', borderColor: 'rgba(244, 63, 94, 0.4)', color: '#fb7185' }}
+                      style={{ padding: '6px 12px', fontSize: '0.76rem', borderColor: 'rgba(244, 63, 94, 0.4)', color: '#e11d48' }}
                     >
                       ✕ Reset Filter (`Show All`)
                     </button>
@@ -1638,7 +1638,7 @@ export default function App() {
                       </td>
                       <td style={{ minWidth: '130px' }}>
                         {m.status === 'active-editing' ? (
-                          <span className="badge badge-urgent" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#fcd34d', border: '1px solid rgba(245, 158, 11, 0.35)', padding: '5px 12px' }}>Active Editing</span>
+                          <span className="badge badge-urgent" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#d97706', border: '1px solid rgba(245, 158, 11, 0.35)', padding: '5px 12px' }}>Active Editing</span>
                         ) : m.status === 'online' ? (
                           <span className="badge badge-emerald" style={{ padding: '5px 12px' }}>Online</span>
                         ) : (
@@ -1649,7 +1649,7 @@ export default function App() {
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                           {Array.from({ length: jobs.filter(j => j.assignedTo === m.id).length }).map((_, i) => (
                             <div key={i} style={{ background: 'rgba(103, 232, 249, 0.1)', padding: '4px', borderRadius: '4px', border: '1px solid rgba(103, 232, 249, 0.2)' }}>
-                              <FolderGit2 size={14} color="#67e8f9" />
+                              <FolderGit2 size={14} color="#0284c7" />
                             </div>
                           ))}
                           {jobs.filter(j => j.assignedTo === m.id).length === 0 && (
@@ -1672,7 +1672,7 @@ export default function App() {
                             style={{ padding: '6px 12px', fontSize: '0.76rem', borderColor: 'var(--accent-cyan)', whiteSpace: 'nowrap' }} 
                             onClick={() => triggerAlert(`[Win PC Audit Live Status • ${m.workstationPC || 'Office Seat'}] Last Sync: ${new Date().toLocaleTimeString()} | Active Process: Adobe Premiere Pro.exe | Window Title: Diandra_Wedding_Cut.prproj | D:\\ Drive Health: 3.8 TB Free / 5.0 TB Total ('Part 2 PowerShell Agent Active')`)}
                           >
-                            <Eye size={13} color="#06b6d4" />
+                            <Eye size={13} color="#0284c7" />
                             <span>Win PC Audit</span>
                           </button>
                           <button 
@@ -1689,7 +1689,7 @@ export default function App() {
                           {isManagerOrOwner && (
                             <button 
                               className="btn-secondary" 
-                              style={{ padding: '6px', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                              style={{ padding: '6px', color: '#dc2626', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
                               onClick={() => confirmAndDelete('Team Member', m.id, deleteTeamMember)}
                             >
                               <Trash2 size={13} />
@@ -1743,7 +1743,7 @@ export default function App() {
                         <td><span className="badge badge-gold" style={{ fontSize: '0.72rem' }}>Fixed Deliverable Mode</span></td>
                         <td>
                           {fl.currentJobTitle ? (
-                            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#67e8f9' }}>{fl.currentJobTitle}</span>
+                            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#0284c7' }}>{fl.currentJobTitle}</span>
                           ) : (
                             <span style={{ fontSize: '0.82rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>Available for Assignment</span>
                           )}
@@ -1751,7 +1751,7 @@ export default function App() {
                         <td><span className="badge badge-emerald">{fl.turnaroundRating}</span></td>
                         <td>
                           {fl.status === 'active-editing' ? (
-                            <span className="badge badge-urgent" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#fcd34d' }}>In Edit</span>
+                            <span className="badge badge-urgent" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#d97706' }}>In Edit</span>
                           ) : fl.status === 'reviewing' ? (
                             <span className="badge badge-cyan">In Review</span>
                           ) : (
@@ -1814,7 +1814,7 @@ export default function App() {
               {lastApiPayload && (
                 <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.35)', borderRadius: '12px', padding: '14px', marginBottom: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#34d399', fontWeight: 700, fontSize: '0.85rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#16a34a', fontWeight: 700, fontSize: '0.85rem' }}>
                       <Check size={16} /> Last API Publish Payload Sent (`{lastApiPayload.apiProvider}`)
                     </div>
                     <button className="btn-secondary" style={{ padding: '2px 8px', fontSize: '0.7rem' }} onClick={() => setLastApiPayload(null)}>Clear Inspector</button>
@@ -1866,7 +1866,7 @@ export default function App() {
                             API Post Now
                           </button>
                           {isManagerOrOwner && (
-                            <button className="btn-secondary" style={{ padding: '7px 10px', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                            <button className="btn-secondary" style={{ padding: '7px 10px', color: '#dc2626', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
                               onClick={() => confirmAndDelete('Social Post', post.id, deletePost)}
                             >
                               <Trash2 size={13} />
@@ -1911,16 +1911,16 @@ export default function App() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px', marginBottom: '28px' }}>
                 <div style={{ background: 'rgba(244, 63, 94, 0.08)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '12px', padding: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fb7185' }}>Drive Account #1 (Master Raw Dump)</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#e11d48' }}>Drive Account #1 (Master Raw Dump)</span>
                     <span className="badge badge-urgent" style={{ fontSize: '0.65rem' }}>Active SD Ingest</span>
                   </div>
                   <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount1}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
                     <span>4.1 TB / 5.0 TB Used</span>
-                    <strong style={{ color: '#fb7185' }}>82% Full</strong>
+                    <strong style={{ color: '#e11d48' }}>82% Full</strong>
                   </div>
                   <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '82%', height: '100%', background: '#fb7185' }}></div>
+                    <div style={{ width: '82%', height: '100%', background: '#e11d48' }}></div>
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: All Cam A/B/C Master 4K SD Card Dumps (`/RawFootage`)
@@ -1929,16 +1929,16 @@ export default function App() {
 
                 <div style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '12px', padding: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fcd34d' }}>Drive Account #2 (Active Edits Vault)</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d97706' }}>Drive Account #2 (Active Edits Vault)</span>
                     <span className="badge badge-gold" style={{ fontSize: '0.65rem' }}>Workstation Active</span>
                   </div>
                   <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount2}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
                     <span>2.8 TB / 5.0 TB Used</span>
-                    <strong style={{ color: '#fcd34d' }}>56% Full</strong>
+                    <strong style={{ color: '#d97706' }}>56% Full</strong>
                   </div>
                   <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '56%', height: '100%', background: '#fcd34d' }}></div>
+                    <div style={{ width: '56%', height: '100%', background: '#d97706' }}></div>
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: Premiere Pro Projects, Proxy Files & Scratch Disks (`/Edits`)
@@ -1947,16 +1947,16 @@ export default function App() {
 
                 <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '12px', padding: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#34d399' }}>Drive Account #3 (Client Deliverables)</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16a34a' }}>Drive Account #3 (Client Deliverables)</span>
                     <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>Review & Archive</span>
                   </div>
                   <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount3}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
                     <span>1.2 TB / 5.0 TB Used</span>
-                    <strong style={{ color: '#34d399' }}>24% Full</strong>
+                    <strong style={{ color: '#16a34a' }}>24% Full</strong>
                   </div>
                   <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '24%', height: '100%', background: '#34d399' }}></div>
+                    <div style={{ width: '24%', height: '100%', background: '#16a34a' }}></div>
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: Final 4K Reels, Master Exports & Retouched Photos (`/FinalDelivery`)
@@ -1990,19 +1990,19 @@ export default function App() {
                       <td style={{ minWidth: '320px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.75rem' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#fb7185' }}></span>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#e11d48' }}></span>
                             <span style={{ color: 'var(--text-muted)' }}>Raw:</span>
-                            <a href={driveUrl1} target="_blank" rel="noreferrer" style={{ color: '#67e8f9', textDecoration: 'none', fontWeight: 600 }}>Drive #1 /{c.clientCode}/RawFootage</a>
+                            <a href={driveUrl1} target="_blank" rel="noreferrer" style={{ color: '#0284c7', textDecoration: 'none', fontWeight: 600 }}>Drive #1 /{c.clientCode}/RawFootage</a>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#fcd34d' }}></span>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#d97706' }}></span>
                             <span style={{ color: 'var(--text-muted)' }}>Edits:</span>
-                            <a href={driveUrl2} target="_blank" rel="noreferrer" style={{ color: '#fcd34d', textDecoration: 'none', fontWeight: 600 }}>Drive #2 /{c.clientCode}/Edits</a>
+                            <a href={driveUrl2} target="_blank" rel="noreferrer" style={{ color: '#d97706', textDecoration: 'none', fontWeight: 600 }}>Drive #2 /{c.clientCode}/Edits</a>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399' }}></span>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#16a34a' }}></span>
                             <span style={{ color: 'var(--text-muted)' }}>Final:</span>
-                            <a href={driveUrl3} target="_blank" rel="noreferrer" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 600 }}>Drive #3 /{c.clientCode}/FinalDelivery</a>
+                            <a href={driveUrl3} target="_blank" rel="noreferrer" style={{ color: '#16a34a', textDecoration: 'none', fontWeight: 600 }}>Drive #3 /{c.clientCode}/FinalDelivery</a>
                           </div>
                         </div>
                       </td>
@@ -2013,7 +2013,7 @@ export default function App() {
                             Copy Paths
                           </button>
                           {isManagerOrOwner && (
-                            <button className="btn-secondary" style={{ padding: '6px', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }} onClick={() => confirmAndDelete('Client', c.id, deleteClient)}>
+                            <button className="btn-secondary" style={{ padding: '6px', color: '#dc2626', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }} onClick={() => confirmAndDelete('Client', c.id, deleteClient)}>
                               <Trash2 size={14} />
                             </button>
                           )}
@@ -2131,7 +2131,7 @@ export default function App() {
                   style={{ flexDirection: 'column', padding: '12px', borderColor: apiProvider === 'socialpilot' ? 'var(--accent-cyan)' : 'var(--border-subtle)', background: apiProvider === 'socialpilot' ? 'rgba(6, 182, 212, 0.15)' : 'var(--bg-dark)' }}
                   onClick={() => setApiProvider('socialpilot')}
                 >
-                  <Code2 size={20} color="#67e8f9" />
+                  <Code2 size={20} color="#0284c7" />
                   <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>SocialPilot REST API</span>
                   <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Agency / Enterprise</span>
                 </button>
@@ -2151,7 +2151,7 @@ export default function App() {
                   style={{ flexDirection: 'column', padding: '12px', borderColor: apiProvider === 'webhook' ? 'var(--accent-emerald)' : 'var(--border-subtle)', background: apiProvider === 'webhook' ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-dark)' }}
                   onClick={() => setApiProvider('webhook')}
                 >
-                  <Webhook size={20} color="#34d399" />
+                  <Webhook size={20} color="#16a34a" />
                   <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>Make / Zapier Hook</span>
                   <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>No-Code Automation</span>
                 </button>
@@ -2245,12 +2245,12 @@ export default function App() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', background: 'var(--bg-dark)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
                 <div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>SLA Target Deadline</div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#67e8f9', marginTop: '4px' }}>{showJobDetailModal.turnaroundSLA} Hours</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0284c7', marginTop: '4px' }}>{showJobDetailModal.turnaroundSLA} Hours</div>
                   <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>SLA Target Turnaround</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>Scoped vs Logged</div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: showJobDetailModal.loggedHours > showJobDetailModal.estimatedHours * 2 ? '#fb7185' : '#34d399', marginTop: '4px' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: showJobDetailModal.loggedHours > showJobDetailModal.estimatedHours * 2 ? '#e11d48' : '#16a34a', marginTop: '4px' }}>
                     {showJobDetailModal.loggedHours}h / {showJobDetailModal.estimatedHours}h
                   </div>
                   <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Estimated Edit Scope</div>
@@ -2268,7 +2268,7 @@ export default function App() {
               {showJobDetailModal.turnaroundClockStatus === 'Accepted & Ticking' && showJobDetailModal.acceptedAt ? (
                 <div style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '10px', padding: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                   <div>
-                    <div style={{ color: '#34d399', fontWeight: 800, fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ color: '#16a34a', fontWeight: 800, fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <Clock size={16} />
                       <span>⏳ Turnaround Clock Active</span>
                     </div>
@@ -2280,16 +2280,16 @@ export default function App() {
                 </div>
               ) : showJobDetailModal.turnaroundClockStatus === 'Completed' ? (
                 <div style={{ background: 'rgba(6, 182, 212, 0.15)', border: '1px solid rgba(6, 182, 212, 0.4)', borderRadius: '10px', padding: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <CheckCircle size={18} color="#67e8f9" />
+                  <CheckCircle size={18} color="#0284c7" />
                   <div>
-                    <div style={{ color: '#67e8f9', fontWeight: 800, fontSize: '0.9rem' }}>✅ SLA Completed & Submitted</div>
+                    <div style={{ color: '#0284c7', fontWeight: 800, fontSize: '0.9rem' }}>✅ SLA Completed & Submitted</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.76rem', marginTop: '2px' }}>Final deliverable pushed to review queue.</div>
                   </div>
                 </div>
               ) : showJobDetailModal.stage !== 'delivered' ? (
                 <div style={{ background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '10px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
-                    <div style={{ color: '#34d399', fontWeight: 800, fontSize: '0.92rem' }}>Start Assignment?</div>
+                    <div style={{ color: '#16a34a', fontWeight: 800, fontSize: '0.92rem' }}>Start Assignment?</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '4px' }}>
                       Clicking Accept records your current exact start time ({new Date().toLocaleTimeString()}) and begins your {showJobDetailModal.turnaroundSLA}h turnaround clock.
                     </div>
@@ -2322,10 +2322,10 @@ export default function App() {
               <div style={{ background: 'rgba(0,0,0,0.02)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '12px' }}>
                 <h4 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '8px', color: 'var(--accent-gold)' }}>PRODUCTION ASSETS</h4>
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', fontSize: '0.8rem' }}>
-                  <a href={showJobDetailModal.driveDeliverableLink || driveUrl1} target="_blank" rel="noreferrer" style={{ color: '#67e8f9', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <a href={showJobDetailModal.driveDeliverableLink || driveUrl1} target="_blank" rel="noreferrer" style={{ color: '#0284c7', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <ExternalLink size={14} /> Open Master Raw Dump (`Drive #1`)
                   </a>
-                  <a href={driveUrl2} target="_blank" rel="noreferrer" style={{ color: '#fcd34d', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <a href={driveUrl2} target="_blank" rel="noreferrer" style={{ color: '#d97706', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <ExternalLink size={14} /> Open Premiere Scratch Vault (`Drive #2`)
                   </a>
                 </div>
@@ -2333,8 +2333,8 @@ export default function App() {
 
               {/* Manager Assignment Block for Unassigned Jobs */}
               {isManagerOrOwner && showJobDetailModal.stage === 'unassigned' && (
-                <div style={{ background: 'rgba(6, 182, 212, 0.1)', border: '1px solid #06b6d4', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
-                  <h4 style={{ color: '#06b6d4', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Assign Project:</h4>
+                <div style={{ background: 'rgba(6, 182, 212, 0.1)', border: '1px solid #0284c7', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
+                  <h4 style={{ color: '#0284c7', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Assign Project:</h4>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <select 
                       className="input-field" 
@@ -2365,7 +2365,7 @@ export default function App() {
               {/* Cancellation Request Section */}
               {!isManagerOrOwner && showJobDetailModal.stage !== 'delivered' && showJobDetailModal.stage !== 'unassigned' && !showJobDetailModal.cancellationRequested && (
                 <div style={{ background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
-                  <h4 style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Stuck or Unable to Complete?</h4>
+                  <h4 style={{ color: '#dc2626', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Stuck or Unable to Complete?</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <input 
                       type="text" 
@@ -2375,7 +2375,7 @@ export default function App() {
                       className="input-field" 
                       style={{ borderColor: 'rgba(239,68,68,0.3)' }}
                     />
-                    <button className="btn-secondary" style={{ borderColor: 'rgba(239,68,68,0.5)', color: '#ef4444', alignSelf: 'flex-start' }} onClick={() => handleRequestCancellation(showJobDetailModal.id)}>
+                    <button className="btn-secondary" style={{ borderColor: 'rgba(239,68,68,0.5)', color: '#dc2626', alignSelf: 'flex-start' }} onClick={() => handleRequestCancellation(showJobDetailModal.id)}>
                       Request Project Cancellation
                     </button>
                   </div>
@@ -2383,14 +2383,14 @@ export default function App() {
               )}
 
               {showJobDetailModal.cancellationRequested && (
-                <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
-                  <h4 style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: 800, marginBottom: '4px' }}>🚨 CANCELLATION REQUESTED</h4>
+                <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #dc2626', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
+                  <h4 style={{ color: '#dc2626', fontSize: '0.9rem', fontWeight: 800, marginBottom: '4px' }}>🚨 CANCELLATION REQUESTED</h4>
                   <p style={{ color: 'var(--text-main)', fontSize: '0.8rem', marginBottom: '12px' }}>
                     <strong>Reason:</strong> {showJobDetailModal.cancellationReason}
                   </p>
                   {isManagerOrOwner ? (
                     <div style={{ display: 'flex', gap: '10px' }}>
-                      <button className="btn-secondary" style={{ backgroundColor: '#ef4444', color: 'var(--text-main)', border: 'none' }} onClick={() => handleApproveCancellation(showJobDetailModal.id)}>
+                      <button className="btn-secondary" style={{ backgroundColor: '#dc2626', color: 'var(--text-main)', border: 'none' }} onClick={() => handleApproveCancellation(showJobDetailModal.id)}>
                         Approve Cancellation (Unassign)
                       </button>
                       <button className="btn-secondary" onClick={() => handleRejectCancellation(showJobDetailModal.id)}>
@@ -2409,8 +2409,8 @@ export default function App() {
               {showJobDetailModal.stage !== 'delivered' ? (
                 <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '12px', padding: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                    <CheckCircle2 size={18} color="#34d399" />
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#34d399' }}>DELIVERABLE SUBMISSION PORTAL</h4>
+                    <CheckCircle2 size={18} color="#16a34a" />
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#16a34a' }}>DELIVERABLE SUBMISSION PORTAL</h4>
                   </div>
                   <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
                     When you finish this edit, paste your final 4K export or review link below. Submitting pushes the task to <strong>Client Review</strong> and notifies the Production Manager!
@@ -2444,7 +2444,7 @@ export default function App() {
                   </div>
                 </div>
               ) : (
-                <div style={{ background: 'rgba(52, 211, 153, 0.15)', border: '1px solid #34d399', borderRadius: '10px', padding: '14px', textAlign: 'center', color: '#34d399', fontWeight: 700 }}>
+                <div style={{ background: 'rgba(52, 211, 153, 0.15)', border: '1px solid #16a34a', borderRadius: '10px', padding: '14px', textAlign: 'center', color: '#16a34a', fontWeight: 700 }}>
                   This deliverable has been fully approved and released to the client!
                 </div>
               )}
@@ -2473,7 +2473,7 @@ export default function App() {
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button className="btn-secondary" onClick={() => setShowJobDetailModal(null)}>Close</button>
                 {isManagerOrOwner && (
-                  <button className="btn-secondary" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)' }}
+                  <button className="btn-secondary" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#dc2626', borderColor: 'rgba(239, 68, 68, 0.2)' }}
                     onClick={() => confirmAndDelete('Job', showJobDetailModal.id, deleteJob)}
                   >
                     <Trash2 size={16} /> Delete
@@ -2615,7 +2615,7 @@ export default function App() {
                 </div>
 
                 <div style={{ background: 'rgba(6, 182, 212, 0.08)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(6, 182, 212, 0.3)' }}>
-                  <label style={{ fontSize: '0.78rem', color: '#67e8f9', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
+                  <label style={{ fontSize: '0.78rem', color: '#0284c7', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
                     2. Project Where is Saved? (`Local Workstation vs Google Drive`) *
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', gap: '8px' }}>
@@ -2732,13 +2732,13 @@ export default function App() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div style={{ background: 'rgba(244, 63, 94, 0.08)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(244, 63, 94, 0.3)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <label style={{ fontSize: '0.8rem', color: '#fb7185', fontWeight: 700 }}>
+                    <label style={{ fontSize: '0.8rem', color: '#e11d48', fontWeight: 700 }}>
                       Drive Account #1: Master Raw SD Card Ingest Vault (`5TB`)
                     </label>
                     <button 
                       type="button"
                       className="btn-secondary" 
-                      style={{ padding: '4px 10px', fontSize: '0.72rem', borderColor: '#fb7185', color: '#fb7185' }}
+                      style={{ padding: '4px 10px', fontSize: '0.72rem', borderColor: '#e11d48', color: '#e11d48' }}
                       onClick={() => window.open(driveUrl1, '_blank')}
                     >
                       Test Open Drive
@@ -2752,13 +2752,13 @@ export default function App() {
 
                 <div style={{ background: 'rgba(245, 158, 11, 0.08)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <label style={{ fontSize: '0.8rem', color: '#fcd34d', fontWeight: 700 }}>
+                    <label style={{ fontSize: '0.8rem', color: '#d97706', fontWeight: 700 }}>
                       Drive Account #2: Active Workstation Premiere / Resolve Edits (`5TB`)
                     </label>
                     <button 
                       type="button"
                       className="btn-secondary" 
-                      style={{ padding: '4px 10px', fontSize: '0.72rem', borderColor: '#fcd34d', color: '#fcd34d' }}
+                      style={{ padding: '4px 10px', fontSize: '0.72rem', borderColor: '#d97706', color: '#d97706' }}
                       onClick={() => window.open(driveUrl2, '_blank')}
                     >
                       Test Open Drive
@@ -2772,13 +2772,13 @@ export default function App() {
 
                 <div style={{ background: 'rgba(16, 185, 129, 0.08)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <label style={{ fontSize: '0.8rem', color: '#34d399', fontWeight: 700 }}>
+                    <label style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 700 }}>
                       Drive Account #3: Client Review Links & Final 4K Archive (`5TB`)
                     </label>
                     <button 
                       type="button"
                       className="btn-secondary" 
-                      style={{ padding: '4px 10px', fontSize: '0.72rem', borderColor: '#34d399', color: '#34d399' }}
+                      style={{ padding: '4px 10px', fontSize: '0.72rem', borderColor: '#16a34a', color: '#16a34a' }}
                       onClick={() => window.open(driveUrl3, '_blank')}
                     >
                       Test Open Drive
@@ -2853,7 +2853,7 @@ export default function App() {
 
               {/* Step 2: Select OS */}
               <div>
-                <label style={{ fontSize: '0.8rem', color: '#67e8f9', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
+                <label style={{ fontSize: '0.8rem', color: '#0284c7', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
                   2. Select Workstation Operating System
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -2879,7 +2879,7 @@ export default function App() {
                     style={{
                       padding: '12px',
                       borderRadius: '12px',
-                      border: `2px solid ${configOsType === 'mac' ? '#06b6d4' : 'var(--border-subtle)'}`,
+                      border: `2px solid ${configOsType === 'mac' ? '#0284c7' : 'var(--border-subtle)'}`,
                       background: configOsType === 'mac' ? 'rgba(6, 182, 212, 0.15)' : 'rgba(0,0,0,0.02)',
                       color: 'var(--text-main)',
                       fontWeight: 700,

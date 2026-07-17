@@ -110,7 +110,7 @@
   gap: 16px;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(0,0,0,0.03);
   backdrop-filter: blur(16px);
   z-index: 40;
   flex-shrink: 0;
@@ -123,7 +123,7 @@
   flex-wrap: wrap;
   gap: 14px;
   padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(0,0,0,0.03);
   border: 1px solid var(--border-subtle);
   border-radius: 16px;
   margin-bottom: 22px;
@@ -183,7 +183,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(0,0,0,0.03);
 }
 
 .clean-table td {
@@ -194,7 +194,7 @@
 }
 
 .clean-table tr:hover td {
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(0,0,0,0.03);
 }
 
 /* Kanban Board Container */
@@ -208,7 +208,7 @@
 }
 
 .kanban-col {
-  background: rgba(21, 25, 36, 0.6);
+  background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: 16px;
   display: flex;
@@ -337,7 +337,7 @@
     padding: 0 10px;
     border-right: none;
     border-top: 1px solid var(--border-subtle);
-    background: rgba(11, 13, 19, 0.95);
+    background: var(--bg-glass);
     backdrop-filter: blur(20px);
     z-index: 9999;
     flex-direction: row;
