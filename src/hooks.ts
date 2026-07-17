@@ -7,6 +7,20 @@ import { apiFetch } from './config';
 import type { TeamMember, Client, JobCard, SocialPost } from './types';
 import { INITIAL_TEAM, INITIAL_CLIENTS, INITIAL_JOBS, INITIAL_SOCIAL_POSTS } from './data/mockData';
 
+// Normalize MongoDB _id → id so frontend code can always use .id
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeId(obj: any): any {
+  if (obj && obj._id && !obj.id) {
+    return { ...obj, id: obj._id };
+  }
+  return obj;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeList(list: any[]): any[] {
+  return list.map(normalizeId);
+}
+
 // Generic localStorage cache helper
 function getCached<T>(key: string, fallback: T): T {
   try {
@@ -34,7 +48,8 @@ export function useTeam() {
     try {
       const res = await apiFetch('/api/team');
       if (res.ok) {
-        const data = await res.json();
+        const raw = await res.json();
+        const data = normalizeList(raw);
         setTeam(data);
         setCache('team', data);
         setApiAvailable(true);
@@ -57,7 +72,7 @@ export function useTeam() {
           body: JSON.stringify(member)
         });
         if (res.ok) {
-          const saved = await res.json();
+          const saved = normalizeId(await res.json());
           setTeam(prev => {
             const updated = [...prev, saved];
             setCache('team', updated);
@@ -85,7 +100,7 @@ export function useTeam() {
           body: JSON.stringify(updates)
         });
         if (res.ok) {
-          const saved = await res.json();
+          const saved = normalizeId(await res.json());
           setTeam(prev => {
             const updated = prev.map(t => t.id === id || (t as any)._id === id ? { ...t, ...saved } : t);
             setCache('team', updated);
@@ -140,7 +155,8 @@ export function useJobs() {
     try {
       const res = await apiFetch('/api/jobs');
       if (res.ok) {
-        const data = await res.json();
+        const raw = await res.json();
+        const data = normalizeList(raw);
         setJobs(data);
         setCache('jobs', data);
         setApiAvailable(true);
@@ -162,7 +178,7 @@ export function useJobs() {
           body: JSON.stringify(job)
         });
         if (res.ok) {
-          const saved = await res.json();
+          const saved = normalizeId(await res.json());
           setJobs(prev => {
             const updated = [saved, ...prev];
             setCache('jobs', updated);
@@ -189,7 +205,7 @@ export function useJobs() {
           body: JSON.stringify(updates)
         });
         if (res.ok) {
-          const saved = await res.json();
+          const saved = normalizeId(await res.json());
           setJobs(prev => {
             const updated = prev.map(j => j.id === id || (j as any)._id === id ? { ...j, ...saved } : j);
             setCache('jobs', updated);
@@ -243,7 +259,8 @@ export function useClients() {
     try {
       const res = await apiFetch('/api/clients');
       if (res.ok) {
-        const data = await res.json();
+        const raw = await res.json();
+        const data = normalizeList(raw);
         setClients(data);
         setCache('clients', data);
         setApiAvailable(true);
@@ -265,7 +282,7 @@ export function useClients() {
           body: JSON.stringify(client)
         });
         if (res.ok) {
-          const saved = await res.json();
+          const saved = normalizeId(await res.json());
           setClients(prev => {
             const updated = [...prev, saved];
             setCache('clients', updated);
@@ -321,7 +338,8 @@ export function useSocialPosts() {
     try {
       const res = await apiFetch('/api/social');
       if (res.ok) {
-        const data = await res.json();
+        const raw = await res.json();
+        const data = normalizeList(raw);
         setSocialPosts(data);
         setCache('socialPosts', data);
         setApiAvailable(true);
@@ -343,7 +361,7 @@ export function useSocialPosts() {
           body: JSON.stringify(post)
         });
         if (res.ok) {
-          const saved = await res.json();
+          const saved = normalizeId(await res.json());
           setSocialPosts(prev => {
             const updated = [saved, ...prev];
             setCache('socialPosts', updated);
@@ -370,7 +388,7 @@ export function useSocialPosts() {
           body: JSON.stringify(updates)
         });
         if (res.ok) {
-          const saved = await res.json();
+          const saved = normalizeId(await res.json());
           setSocialPosts(prev => {
             const updated = prev.map(p => p.id === id || (p as any)._id === id ? { ...p, ...saved } : p);
             setCache('socialPosts', updated);

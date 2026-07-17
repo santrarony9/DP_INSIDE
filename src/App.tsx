@@ -90,7 +90,7 @@ export default function App() {
   // State (Syncs with VPS API)
   const { team, deleteTeamMember, addTeamMember, updateTeamMember } = useTeam();
   const { clients, deleteClient, addClient } = useClients();
-  const { jobs, setJobs, deleteJob, addJob, updateJob } = useJobs();
+  const { jobs, deleteJob, addJob, updateJob } = useJobs();
   const { socialPosts, deletePost, addPost, updatePost } = useSocialPosts();
 
   // Auth & Workstation
@@ -177,6 +177,41 @@ export default function App() {
 
   const [configOsType, setConfigOsType] = useState<'windows' | 'mac'>('windows');
 
+  // Notification System (localStorage-backed)
+  type AppNotification = { id: string; message: string; time: string; read: boolean; forUserId: string };
+  const [notifications, setNotifications] = useState<AppNotification[]>(() => {
+    try {
+      const cached = localStorage.getItem('dpinside_notifications');
+      return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+  });
+
+  const pushNotification = (forUserId: string, message: string) => {
+    const notif: AppNotification = {
+      id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      message,
+      time: new Date().toLocaleString(),
+      read: false,
+      forUserId
+    };
+    setNotifications(prev => {
+      const updated = [notif, ...prev];
+      localStorage.setItem('dpinside_notifications', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const markAllNotificationsRead = () => {
+    setNotifications(prev => {
+      const updated = prev.map(n => n.forUserId === currentUser?.id ? { ...n, read: true } : n);
+      localStorage.setItem('dpinside_notifications', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const myNotifications = notifications.filter(n => n.forUserId === currentUser?.id);
+  const myUnreadCount = myNotifications.filter(n => !n.read).length;
+
   useEffect(() => {
     let interval: any = null;
     if (isTimerRunning) {
@@ -209,17 +244,12 @@ export default function App() {
     alert('Please login from the main screen.');
   };
 
-  const moveJobStage = (jobId: string, nextStage: PipelineStage) => {
-    setJobs((prevJobs) =>
-      prevJobs.map((j) => {
-        if (j.id === jobId) {
-          const updated = { ...j, stage: nextStage, daysInStage: 1 };
-          if (nextStage === 'delivered') updated.isOverdue = false;
-          return updated;
-        }
-        return j;
-      })
-    );
+  const moveJobStage = async (jobId: string, nextStage: PipelineStage) => {
+    const job = jobs.find(j => j.id === jobId);
+    if (!job) return;
+    const updates: Partial<JobCard> = { ...job, stage: nextStage, daysInStage: 1 };
+    if (nextStage === 'delivered') updates.isOverdue = false;
+    await updateJob(jobId, updates);
     triggerAlert(`Task moved to: ${nextStage.toUpperCase()} by ${currentUser?.name.split(' ')[0]}`);
     if (showJobDetailModal && showJobDetailModal.id === jobId) {
       setShowJobDetailModal((prev) => (prev ? { ...prev, stage: nextStage } : null));
@@ -236,21 +266,16 @@ export default function App() {
     }
   };
 
-  const handleAcceptJobClock = (jobId: string) => {
+  const handleAcceptJobClock = async (jobId: string) => {
     const nowStr = new Date().toLocaleString();
-    setJobs((prev) =>
-      prev.map((j) => {
-        if (j.id === jobId) {
-          return {
-            ...j,
-            stage: j.stage === 'assigned' ? 'editing' : j.stage,
-            acceptedAt: nowStr,
-            turnaroundClockStatus: 'Accepted & Ticking'
-          };
-        }
-        return j;
-      })
-    );
+    const job = jobs.find(j => j.id === jobId);
+    if (!job) return;
+    await updateJob(jobId, {
+      ...job,
+      stage: job.stage === 'assigned' ? 'editing' : job.stage,
+      acceptedAt: nowStr,
+      turnaroundClockStatus: 'Accepted & Ticking'
+    });
     if (showJobDetailModal && showJobDetailModal.id === jobId) {
       setShowJobDetailModal((prev) => (prev ? { ...prev, acceptedAt: nowStr, turnaroundClockStatus: 'Accepted & Ticking', stage: prev.stage === 'assigned' ? 'editing' : prev.stage } : null));
     }
@@ -461,6 +486,9 @@ export default function App() {
 
     await addClient(newCli);
     await addJob(newJob);
+    if (newCliAssignee) {
+      pushNotification(newCliAssignee, `📋 New Project Assigned: "${newCliName} - Main Production Deliverable" — assigned by ${currentUser?.name}. Open your dashboard to review.`);
+    }
     setShowAddClientModal(false);
     setNewCliName('');
     triggerAlert(`Project "${newCliName}" created & assigned. Saved to: [${newCliStorageType.toUpperCase()}] ${newCliStoragePath}`);
@@ -933,6 +961,38 @@ export default function App() {
               {/* --- EMPLOYEE / EDITOR / FREELANCE DASHBOARD --- */}
               {(currentUser.roleType === 'editor' || currentUser.roleType === 'freelance') && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {/* Notification Panel */}
+                  {myNotifications.length > 0 && (
+                    <div style={{ background: myUnreadCount > 0 ? 'rgba(251, 191, 36, 0.08)' : 'rgba(255,255,255,0.02)', border: `1px solid ${myUnreadCount > 0 ? 'rgba(251, 191, 36, 0.3)' : 'var(--border-subtle)'}`, borderRadius: '12px', padding: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '1.1rem' }}>🔔</span>
+                          <span style={{ fontSize: '0.88rem', fontWeight: 700, color: myUnreadCount > 0 ? '#fbbf24' : 'var(--text-muted)' }}>
+                            {myUnreadCount > 0 ? `${myUnreadCount} New Notification${myUnreadCount > 1 ? 's' : ''}` : 'Notifications'}
+                          </span>
+                        </div>
+                        {myUnreadCount > 0 && (
+                          <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.72rem' }} onClick={markAllNotificationsRead}>
+                            Mark All Read
+                          </button>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto' }}>
+                        {myNotifications.slice(0, 10).map(n => (
+                          <div key={n.id} style={{ 
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            padding: '8px 12px', borderRadius: '8px', fontSize: '0.82rem',
+                            background: n.read ? 'rgba(255,255,255,0.02)' : 'rgba(251, 191, 36, 0.1)',
+                            border: `1px solid ${n.read ? 'transparent' : 'rgba(251, 191, 36, 0.15)'}`,
+                            fontWeight: n.read ? 400 : 600
+                          }}>
+                            <span style={{ color: n.read ? 'var(--text-muted)' : 'var(--text-main)' }}>{n.message}</span>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', whiteSpace: 'nowrap', marginLeft: '12px' }}>{n.time}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   {/* KPI Cards */}
                   <div className="dashboard-kpi-grid">
                     <div className="kpi-card">
@@ -2268,6 +2328,7 @@ export default function App() {
                             assignedTo: newAssignee,
                             notes: [...showJobDetailModal.notes, `[ASSIGNED by ${currentUser?.name} on ${new Date().toLocaleString()}] to ${team.find(t=>t.id===newAssignee)?.name}`]
                           });
+                          pushNotification(newAssignee, `📋 New Project Assigned: "${showJobDetailModal.title}" — assigned by ${currentUser?.name}. Open your dashboard to review.`);
                           setShowJobDetailModal(null);
                           triggerAlert('Project assigned successfully.');
                         }
