@@ -880,7 +880,7 @@ export default function App() {
                   }
                 }}
                 style={{ 
-                  background: isTimerRunning ? '#fb7185' : 'linear-gradient(135deg, #10b981, #059669)', 
+                  background: isTimerRunning ? '#fb7185' : '#1877f2', 
                   color: 'var(--text-main)', 
                   border: 'none', 
                   borderRadius: '18px', 
@@ -943,7 +943,7 @@ export default function App() {
             top: '80px',
             right: '28px',
             zIndex: 9999,
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            background: '#1877f2',
             color: 'var(--text-main)',
             padding: '10px 18px',
             borderRadius: '10px',
@@ -1086,7 +1086,7 @@ export default function App() {
                                   <td>
                                     <button 
                                       className="btn-primary" 
-                                      style={{ padding: '6px 12px', fontSize: '0.8rem', background: 'linear-gradient(135deg, #06b6d4, #3b82f6)' }}
+                                      style={{ padding: '6px 12px', fontSize: '0.8rem', background: 'var(--bg-surface)' }}
                                       onClick={() => setShowJobDetailModal(job)}
                                     >
                                       Review & Submit
@@ -1331,7 +1331,7 @@ export default function App() {
               {/* Active Employee Workload Tracking Banner when Filtered */}
               {selectedEmployeeFilter !== 'all' && (
                 <div style={{
-                  background: 'linear-gradient(135deg, rgba(226, 183, 20, 0.12) 0%, rgba(16, 185, 129, 0.08) 100%)',
+                  background: 'rgba(0,0,0,0.02)',
                   border: '1px solid rgba(226, 183, 20, 0.35)',
                   borderRadius: '16px',
                   padding: '18px 22px',
@@ -1463,7 +1463,7 @@ export default function App() {
                                   width: '100%',
                                   marginTop: '8px',
                                   padding: '6px 10px',
-                                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                                  background: '#1877f2',
                                   color: 'var(--text-main)',
                                   border: 'none',
                                   borderRadius: '8px',
@@ -1543,7 +1543,7 @@ export default function App() {
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <button 
                     className="btn-primary" 
-                    style={{ background: 'linear-gradient(135deg, #eab308, #f59e0b)', color: '#000', fontWeight: 800, padding: '8px 16px', fontSize: '0.82rem' }} 
+                    style={{ background: '#1877f2', color: '#ffffff', fontWeight: 800, padding: '8px 16px', fontSize: '0.82rem' }} 
                     onClick={() => setShowWorkstationConfigModal(true)}
                   >
                     <span>⚡ Configure Devices</span>
@@ -1677,7 +1677,7 @@ export default function App() {
                           </button>
                           <button 
                             className="btn-primary" 
-                            style={{ padding: '6px 12px', fontSize: '0.76rem', background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', whiteSpace: 'nowrap', color: 'var(--text-main)', border: 'none' }}
+                            style={{ padding: '6px 12px', fontSize: '0.76rem', background: 'var(--bg-surface)', whiteSpace: 'nowrap', color: 'var(--text-main)', border: 'none' }}
                             onClick={() => {
                               setSelectedEmployeeFilter(m.id);
                               setActiveTab('kanban');
@@ -1765,7 +1765,7 @@ export default function App() {
                             </button>
                             <button 
                               className="btn-primary" 
-                              style={{ padding: '4px 8px', fontSize: '0.72rem', background: 'linear-gradient(135deg, #06b6d4, #3b82f6)' }}
+                              style={{ padding: '4px 8px', fontSize: '0.72rem', background: 'var(--bg-surface)' }}
                               onClick={() => {
                                 setSelectedEmployeeFilter(`fl-${fl.name}`);
                                 setActiveTab('kanban');
@@ -2287,7 +2287,7 @@ export default function App() {
                   </div>
                 </div>
               ) : showJobDetailModal.stage !== 'delivered' ? (
-                <div style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(245, 158, 11, 0.08))', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '10px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '10px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
                     <div style={{ color: '#34d399', fontWeight: 800, fontSize: '0.92rem' }}>Start Assignment?</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '4px' }}>
@@ -2299,7 +2299,7 @@ export default function App() {
                     onClick={() => handleAcceptJobClock(showJobDetailModal.id)}
                     style={{
                       padding: '10px 18px',
-                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      background: '#1877f2',
                       color: 'var(--text-main)',
                       border: 'none',
                       borderRadius: '8px',
@@ -2482,7 +2482,7 @@ export default function App() {
                 {showJobDetailModal.stage !== 'delivered' && (
                   <button 
                     className="btn-primary" 
-                    style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                    style={{ background: '#1877f2' }}
                     onClick={() => handleEditorSubmitProject(showJobDetailModal.id)}
                   >
                     Submit Deliverable & Handoff
@@ -2907,7 +2907,7 @@ export default function App() {
                       justifyContent: 'center', 
                       padding: '14px', 
                       fontSize: '0.92rem', 
-                      background: configOsType === 'windows' ? 'linear-gradient(135deg, #eab308, #f59e0b)' : 'linear-gradient(135deg, #06b6d4, #3b82f6)',
+                      background: configOsType === 'windows' ? '#1877f2' : 'var(--bg-surface)',
                       color: configOsType === 'windows' ? '#000' : '#fff',
                       fontWeight: 800
                     }}
