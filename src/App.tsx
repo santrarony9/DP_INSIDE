@@ -555,8 +555,12 @@ export default function App() {
   };
 
   const filteredJobs = jobs.filter((j) => {
-    // Hide unassigned jobs from regular editors
-    if (j.stage === 'unassigned' && !isManagerOrOwner) return false;
+    // Regular editors/freelancers only see their own assigned jobs
+    if (!isManagerOrOwner) {
+      if (j.assignedTo !== currentUser?.id) return false;
+      if (j.stage === 'unassigned') return false; // Hide unassigned stage even if assignedTo matches (edge case)
+    }
+    
     if (selectedEmployeeFilter !== 'all') {
       if (selectedEmployeeFilter.startsWith('fl-')) {
         const flName = selectedEmployeeFilter.replace('fl-', '');
