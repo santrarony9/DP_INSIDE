@@ -38,10 +38,7 @@ import type {
   SocialPost, 
   PipelineStage 
 } from './types';
-import { 
-  INITIAL_TEAM, 
-  INITIAL_CLIENTS
-} from './data/mockData';
+
 import LoginScreen from './components/LoginScreen';
 import ResourceCalendar from './components/ResourceCalendar';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
@@ -260,32 +257,31 @@ export default function App() {
     triggerAlert(`⏰ [Turnaround Clock Started!] Job accepted by ${currentUser?.name.split(' ')[0]} at current time (${nowStr}). Target SLA: ${jobs.find(j=>j.id===jobId)?.turnaroundSLA || 48}h.`);
   };
 
-  const handleEditorSubmitProject = (jobId: string) => {
+  const handleEditorSubmitProject = async (jobId: string) => {
     if (!submissionUrl) {
       triggerAlert('Please paste your final Google Drive or Dropbox deliverable link before submitting.');
       return;
     }
-    setJobs((prev) =>
-      prev.map((j) => {
-        if (j.id === jobId) {
-          const updatedNotes = [
-            ...j.notes,
-            `[SUBMITTED BY ${currentUser?.name} on ${new Date().toLocaleString()}]: Deliverable Link: ${submissionUrl} | Notes: ${submissionNotes || 'No notes provided.'}`,
-            `[Turnaround Clock Completed at ${new Date().toLocaleTimeString()}]: Project closed within SLA window.`
-          ];
-          return {
-            ...j,
-            stage: 'review',
-            submittedDeliverableUrl: submissionUrl,
-            submissionNotes: submissionNotes,
-            submittedAt: new Date().toLocaleString(),
-            turnaroundClockStatus: 'Completed',
-            notes: updatedNotes
-          };
-        }
-        return j;
-      })
-    );
+    
+    const targetJob = jobs.find(j => j.id === jobId);
+    if (!targetJob) return;
+
+    const updatedNotes = [
+      ...targetJob.notes,
+      `[SUBMITTED BY ${currentUser?.name} on ${new Date().toLocaleString()}]: Deliverable Link: ${submissionUrl} | Notes: ${submissionNotes || 'No notes provided.'}`,
+      `[Turnaround Clock Completed at ${new Date().toLocaleTimeString()}]: Project closed within SLA window.`
+    ];
+
+    await updateJob(jobId, {
+      ...targetJob,
+      stage: 'review',
+      submittedDeliverableUrl: submissionUrl,
+      submissionNotes: submissionNotes,
+      submittedAt: new Date().toLocaleString(),
+      turnaroundClockStatus: 'Completed',
+      notes: updatedNotes
+    });
+
     setShowJobDetailModal(null);
     setSubmissionUrl('');
     setSubmissionNotes('');
@@ -934,199 +930,264 @@ export default function App() {
 
           {activeTab === 'overview' && (
             <div>
-              {/* Employee & Editor Active Assignment Hub (SLA Turnaround Portal) */}
+              {/* --- EMPLOYEE / EDITOR / FREELANCE DASHBOARD --- */}
               {(currentUser.roleType === 'editor' || currentUser.roleType === 'freelance') && (
-                <div style={{ background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%)', border: '1px solid rgba(6, 182, 212, 0.4)', borderRadius: '16px', padding: '20px', marginBottom: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span className="badge badge-cyan" style={{ fontSize: '0.72rem' }}>ACTIVE WORKSTATION ASSIGNMENT</span>
-                        <span className="badge badge-emerald" style={{ fontSize: '0.72rem' }}>SLA COUNTDOWN ACTIVE</span>
-                      </div>
-                      <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', marginTop: '6px' }}>
-                        {jobs.find(j => j.assignedTo === currentUser.id && j.stage !== 'delivered')?.title || 'No active project assigned right now.'}
-                      </h3>
-                      {jobs.find(j => j.assignedTo === currentUser.id && j.stage !== 'delivered') && (
-                        <div style={{ display: 'flex', gap: '16px', fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '8px', flexWrap: 'wrap' }}>
-                          <span>SLA Target: <strong style={{ color: '#67e8f9' }}>{jobs.find(j => j.assignedTo === currentUser.id && j.stage !== 'delivered')?.turnaroundSLA}h Total Turnaround</strong></span>
-                          <span>Est. Scoped: <strong style={{ color: '#fcd34d' }}>{jobs.find(j => j.assignedTo === currentUser.id && j.stage !== 'delivered')?.estimatedHours}h Edit Work</strong></span>
-                          <span>Logged: <strong style={{ color: '#34d399' }}>{jobs.find(j => j.assignedTo === currentUser.id && j.stage !== 'delivered')?.loggedHours}h</strong></span>
-                          <span>Status: <strong style={{ color: '#fb7185' }}>{jobs.find(j => j.assignedTo === currentUser.id && j.stage !== 'delivered')?.stage.toUpperCase()}</strong></span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {/* KPI Cards */}
+                  <div className="dashboard-kpi-grid">
+                    <div className="kpi-card">
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>My Active Projects</span>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '6px' }}>
+                          {jobs.filter(j => j.assignedTo === currentUser.id && j.stage !== 'delivered').length} Projects
                         </div>
-                      )}
+                      </div>
                     </div>
-                    {jobs.find(j => j.assignedTo === currentUser.id && j.stage !== 'delivered') && (
-                      <button 
-                        className="btn-primary" 
-                        style={{ padding: '12px 20px', fontSize: '0.9rem', background: 'linear-gradient(135deg, #06b6d4, #3b82f6)' }}
-                        onClick={() => setShowJobDetailModal(jobs.find(j => j.assignedTo === currentUser.id && j.stage !== 'delivered') || null)}
-                      >
-                        Open Deliverable Submission Portal
-                      </button>
-                    )}
+                    <div className="kpi-card" style={{ borderColor: jobs.some(j => j.assignedTo === currentUser.id && j.isOverdue) ? 'rgba(244, 63, 94, 0.4)' : 'var(--border-subtle)' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Overdue Projects</span>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: jobs.some(j => j.assignedTo === currentUser.id && j.isOverdue) ? '#fb7185' : '#34d399', marginTop: '6px' }}>
+                          {jobs.filter(j => j.assignedTo === currentUser.id && j.isOverdue).length} Overdue
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* My Projects Table */}
+                  <div className="clean-panel" style={{ padding: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <div>
+                        <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>MY ASSIGNED WORK (REQUIRED UPLOADS)</h3>
+                        <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>When finishing a project, click 'Review & Submit' to provide your final Drive deliverable link.</p>
+                      </div>
+                    </div>
+
+                    <div style={{ overflowX: 'auto' }}>
+                      <table className="clean-table">
+                        <thead>
+                          <tr>
+                            <th>Project Title</th>
+                            <th>Client</th>
+                            <th>SLA Target</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {jobs.filter(j => j.assignedTo === currentUser.id && j.stage !== 'delivered').length === 0 ? (
+                            <tr>
+                              <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
+                                You have 0 active projects assigned. Enjoy your break!
+                              </td>
+                            </tr>
+                          ) : (
+                            jobs.filter(j => j.assignedTo === currentUser.id && j.stage !== 'delivered').map(job => {
+                              const client = clients.find(c => c.id === job.clientId);
+                              return (
+                                <tr key={job.id}>
+                                  <td>
+                                    <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.9rem' }}>{job.title}</div>
+                                  </td>
+                                  <td>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{client?.name || 'Unknown'}</div>
+                                  </td>
+                                  <td>
+                                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: job.loggedHours > job.estimatedHours ? '#fb7185' : '#34d399' }}>
+                                      {job.loggedHours}h logged / {job.estimatedHours}h est.
+                                    </div>
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target SLA: {job.turnaroundSLA}h</div>
+                                  </td>
+                                  <td>
+                                    {job.isOverdue ? (
+                                      <span className="badge badge-urgent">OVERDUE</span>
+                                    ) : (
+                                      <span className="badge badge-normal">{job.stage.toUpperCase()}</span>
+                                    )}
+                                  </td>
+                                  <td>
+                                    <button 
+                                      className="btn-primary" 
+                                      style={{ padding: '6px 12px', fontSize: '0.8rem', background: 'linear-gradient(135deg, #06b6d4, #3b82f6)' }}
+                                      onClick={() => setShowJobDetailModal(job)}
+                                    >
+                                      Review & Submit
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* 4 Sleek Executive KPI Cards */}
-              <div className="dashboard-kpi-grid">
-                <div className="kpi-card">
-                  <div>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Turnaround SLA Health</span>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#34d399', marginTop: '6px' }}>92.4%</div>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    <span>Target: 48h Avg</span>
-                    <span className="badge badge-emerald">On Time</span>
-                  </div>
-                </div>
-
-                <div className="kpi-card" style={{ borderColor: jobs.some(j => j.isOverdue) ? 'rgba(244, 63, 94, 0.4)' : 'var(--border-subtle)' }}>
-                  <div>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Overdue Exception Alert</span>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: jobs.some(j => j.isOverdue) ? '#fb7185' : '#34d399', marginTop: '6px' }}>
-                      {jobs.filter(j => j.isOverdue).length} Task
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem' }}>
-                    <span style={{ color: jobs.some(j => j.isOverdue) ? '#fb7185' : 'var(--text-muted)' }}>
-                      {jobs.filter(j => j.isOverdue)[0]?.title.substring(0, 20) || 'All tasks on schedule'}
-                    </span>
-                    {jobs.some(j => j.isOverdue) && (
-                      <button 
-                        className="btn-danger" 
-                        style={{ padding: '3px 8px', fontSize: '0.7rem' }}
-                        onClick={() => setShowJobDetailModal(jobs.find(j => j.isOverdue) || null)}
-                      >
-                        Inspect
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="kpi-card">
-                  <div>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Active Workstations Online</span>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '6px' }}>
-                      {team.filter(t => t.status !== 'offline' && t.status !== 'idle').length} / {team.length} PCs
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    <span>Studio Workstations</span>
-                    <span className="badge badge-cyan">Active</span>
-                  </div>
-                </div>
-
-                <div className="kpi-card">
-                  <div>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Multi-Client Social Queue</span>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-gold)', marginTop: '6px' }}>
-                      {socialPosts.length} Posts
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    <span>FB • Insta • YouTube</span>
-                    <span className="badge badge-gold">Synced</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Side-by-Side Clean Dashboard Split */}
-              <div className="dashboard-split-layout">
-                {/* Left Panel: Active Production Turnaround Queue */}
-                <div className="clean-panel" style={{ padding: '20px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <div>
-                      <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>ACTIVE TURNAROUND & SLA PRODUCTION QUEUE</h3>
-                      <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Solving Q1: Track logged vs estimated hours across open client edits</p>
-                    </div>
-                    <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '0.78rem' }} onClick={() => setActiveTab('kanban')}>
-                      <span>Full Kanban</span>
-                      <ArrowUpRight size={13} />
-                    </button>
-                  </div>
-
-                  <table className="clean-table">
-                    <thead>
-                      <tr>
-                        <th>Job Title & Client</th>
-                        <th>Editor Assigned</th>
-                        <th>Time Logged vs Est.</th>
-                        <th>Stage Status</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {jobs.slice(0, 5).map((job) => {
-                        const client = clients.find((c) => c.id === job.clientId);
-                        const assignee = team.find((t) => t.id === job.assignedTo);
-                        return (
-                          <tr key={job.id}>
-                            <td>
-                              <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.9rem' }}>{job.title}</div>
-                              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{client?.name}</div>
-                            </td>
-                            <td>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ fontSize: '0.85rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '3px 6px', borderRadius: '4px' }}>{assignee?.avatar || '--'}</span>
-                                <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>{assignee ? assignee.name.split(' ')[0] : 'Unassigned'}</span>
-                              </div>
-                            </td>
-                            <td>
-                              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: job.loggedHours > job.estimatedHours * 2 ? '#fb7185' : '#34d399' }}>
-                                {job.loggedHours}h / {job.estimatedHours}h
-                              </div>
-                              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: {job.turnaroundSLA}h SLA</div>
-                            </td>
-                            <td>
-                              {job.isOverdue ? (
-                                <span className="badge badge-urgent">OVERDUE ({job.daysInStage}D)</span>
-                              ) : (
-                                <span className="badge badge-normal">{job.stage.toUpperCase()}</span>
-                              )}
-                            </td>
-                            <td>
-                              <button 
-                                className="btn-secondary" 
-                                style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                                onClick={() => setShowJobDetailModal(job)}
-                              >
-                                Review
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Right Panel: Live Studio Activity Stream & Cloud Links */}
-                <div className="clean-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                      <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>WORKSTATION ACTIVITY FEED</h3>
-                      <Activity size={16} color="var(--accent-cyan)" />
+              {/* --- MANAGER / OWNER DASHBOARD --- */}
+              {(currentUser.roleType === 'manager' || currentUser.roleType === 'owner') && (
+                <>
+                  {/* 4 Sleek Executive KPI Cards */}
+                  <div className="dashboard-kpi-grid">
+                    <div className="kpi-card">
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Turnaround SLA Health</span>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#34d399', marginTop: '6px' }}>92.4%</div>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                        <span>Target: 48h Avg</span>
+                        <span className="badge badge-emerald">On Time</span>
+                      </div>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                      <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>
-                        No recent activity recorded.
+                    <div className="kpi-card" style={{ borderColor: jobs.some(j => j.isOverdue) ? 'rgba(244, 63, 94, 0.4)' : 'var(--border-subtle)' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Overdue Exception Alert</span>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: jobs.some(j => j.isOverdue) ? '#fb7185' : '#34d399', marginTop: '6px' }}>
+                          {jobs.filter(j => j.isOverdue).length} Task
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem' }}>
+                        <span style={{ color: jobs.some(j => j.isOverdue) ? '#fb7185' : 'var(--text-muted)' }}>
+                          {jobs.filter(j => j.isOverdue)[0]?.title.substring(0, 20) || 'All tasks on schedule'}
+                        </span>
+                        {jobs.some(j => j.isOverdue) && (
+                          <button 
+                            className="btn-danger" 
+                            style={{ padding: '3px 8px', fontSize: '0.7rem' }}
+                            onClick={() => setShowJobDetailModal(jobs.find(j => j.isOverdue) || null)}
+                          >
+                            Inspect
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="kpi-card">
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Active Workstations Online</span>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '6px' }}>
+                          {team.filter(t => t.status !== 'offline' && t.status !== 'idle').length} / {team.length} PCs
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                        <span>Studio Workstations</span>
+                        <span className="badge badge-cyan">Active</span>
+                      </div>
+                    </div>
+
+                    <div className="kpi-card">
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Multi-Client Social Queue</span>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-gold)', marginTop: '6px' }}>
+                          {socialPosts.length} Posts
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                        <span>FB • Insta • YouTube</span>
+                        <span className="badge badge-gold">Synced</span>
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ marginTop: '20px', padding: '14px', background: 'rgba(6, 182, 212, 0.08)', borderRadius: '12px', border: '1px solid rgba(6, 182, 212, 0.22)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#67e8f9' }}>CLOUD VAULT MASTER ROOT</span>
-                      <a href="https://drive.google.com" target="_blank" rel="noreferrer" className="badge badge-cyan" style={{ textDecoration: 'none' }}>Open Drive</a>
+                  {/* Side-by-Side Clean Dashboard Split */}
+                  <div className="dashboard-split-layout">
+                    {/* Left Panel: Active Production Turnaround Queue */}
+                    <div className="clean-panel" style={{ padding: '20px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <div>
+                          <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>ACTIVE TURNAROUND & SLA PRODUCTION QUEUE</h3>
+                          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Solving Q1: Track logged vs estimated hours across open client edits</p>
+                        </div>
+                        <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '0.78rem' }} onClick={() => setActiveTab('kanban')}>
+                          <span>Full Kanban</span>
+                          <ArrowUpRight size={13} />
+                        </button>
+                      </div>
+
+                      <table className="clean-table">
+                        <thead>
+                          <tr>
+                            <th>Job Title & Client</th>
+                            <th>Editor Assigned</th>
+                            <th>Time Logged vs Est.</th>
+                            <th>Stage Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {jobs.slice(0, 5).map((job) => {
+                            const client = clients.find((c) => c.id === job.clientId);
+                            const assignee = team.find((t) => t.id === job.assignedTo);
+                            return (
+                              <tr key={job.id}>
+                                <td>
+                                  <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.9rem' }}>{job.title}</div>
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{client?.name}</div>
+                                </td>
+                                <td>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '3px 6px', borderRadius: '4px' }}>{assignee?.avatar || '--'}</span>
+                                    <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>{assignee ? assignee.name.split(' ')[0] : 'Unassigned'}</span>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: job.loggedHours > job.estimatedHours * 2 ? '#fb7185' : '#34d399' }}>
+                                    {job.loggedHours}h / {job.estimatedHours}h
+                                  </div>
+                                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: {job.turnaroundSLA}h SLA</div>
+                                </td>
+                                <td>
+                                  {job.isOverdue ? (
+                                    <span className="badge badge-urgent">OVERDUE ({job.daysInStage}D)</span>
+                                  ) : (
+                                    <span className="badge badge-normal">{job.stage.toUpperCase()}</span>
+                                  )}
+                                </td>
+                                <td>
+                                  <button 
+                                    className="btn-secondary" 
+                                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                                    onClick={() => setShowJobDetailModal(job)}
+                                  >
+                                    Review
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
-                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      All clients standardized under `ClientName / RawFootage / Edits / Final Delivery`.
+
+                    {/* Right Panel: Live Studio Activity Stream & Cloud Links */}
+                    <div className="clean-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                          <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>WORKSTATION ACTIVITY FEED</h3>
+                          <Activity size={16} color="var(--accent-cyan)" />
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                          <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                            No recent activity recorded.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: '20px', padding: '14px', background: 'rgba(6, 182, 212, 0.08)', borderRadius: '12px', border: '1px solid rgba(6, 182, 212, 0.22)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#67e8f9' }}>CLOUD VAULT MASTER ROOT</span>
+                          <a href="https://drive.google.com" target="_blank" rel="noreferrer" className="badge badge-cyan" style={{ textDecoration: 'none' }}>Open Drive</a>
+                        </div>
+                        <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                          All clients standardized under `ClientName / RawFootage / Edits / Final Delivery`.
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
           )}
 
