@@ -434,7 +434,13 @@ export function useSocialPosts() {
 // useAuth — Fetch & manage authentication
 // ========================================================
 export function useAuth() {
-  const [currentUser, setCurrentUser] = useState<TeamMember | null>(getCached('currentUser', null));
+  const [currentUser, setCurrentUser] = useState<TeamMember | null>(() => {
+    const cached = getCached<TeamMember | null>('currentUser', null);
+    if (cached && (cached as any)._id && !cached.id) {
+      return { ...cached, id: (cached as any)._id };
+    }
+    return cached;
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -448,9 +454,10 @@ export function useAuth() {
       });
       const data = await res.json();
       if (res.ok) {
+        const normalizedUser = data.user._id && !data.user.id ? { ...data.user, id: data.user._id } : data.user;
         localStorage.setItem('dpinside_token', data.token);
-        setCache('currentUser', data.user);
-        setCurrentUser(data.user);
+        setCache('currentUser', normalizedUser);
+        setCurrentUser(normalizedUser);
       } else {
         setError(data.error || 'Invalid PIN');
       }

@@ -605,7 +605,7 @@ export default function App() {
           <div className="sidebar-brand">
             <div className="brand-icon">DP</div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1rem', color: '#fff', lineHeight: '1.1' }}>DP INSIDE</div>
+              <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-main)', lineHeight: '1.1' }}>DP INSIDE</div>
               <div style={{ fontSize: '0.68rem', color: 'var(--accent-gold)', fontWeight: 600, letterSpacing: '0.04em' }}>STUDIO OS v2.0</div>
             </div>
           </div>
@@ -619,7 +619,7 @@ export default function App() {
                 <LayoutDashboard size={17} color={activeTab === 'overview' ? 'var(--accent-gold)' : 'inherit'} />
                 <span>{isManagerOrOwner ? 'Executive Dashboard' : 'My Dashboard'}</span>
               </div>
-              <span className="badge" style={{ background: 'rgba(255,255,255,0.06)' }}>Live</span>
+              <span className="badge" style={{ background: 'rgba(0,0,0,0.02)' }}>Live</span>
             </button>
 
             {isManagerOrOwner && (
@@ -634,7 +634,7 @@ export default function App() {
                 {jobs.some(j => j.isOverdue) ? (
                   <span className="badge badge-urgent">1 Overdue</span>
                 ) : (
-                  <span className="badge" style={{ background: 'rgba(255,255,255,0.06)' }}>{jobs.length}</span>
+                  <span className="badge" style={{ background: 'rgba(0,0,0,0.02)' }}>{jobs.length}</span>
                 )}
               </button>
             )}
@@ -707,7 +707,7 @@ export default function App() {
         {/* Workstation Profile Badge (Clean Footer) */}
         <div className="sidebar-user-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '1.2rem', fontWeight: 800, background: 'rgba(255,255,255,0.1)', padding: '6px 10px', borderRadius: '8px', color: 'var(--text-main)' }}>{currentUser.avatar}</span>
+            <span style={{ fontSize: '1.2rem', fontWeight: 800, background: 'rgba(0,0,0,0.05)', padding: '6px 10px', borderRadius: '8px', color: 'var(--text-main)' }}>{currentUser.avatar}</span>
             <div style={{ overflow: 'hidden' }}>
               <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                 {currentUser.name}
@@ -774,7 +774,7 @@ export default function App() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="input-field"
-                style={{ padding: '8px 12px 8px 32px', fontSize: '0.82rem', borderRadius: '24px', background: 'rgba(255,255,255,0.03)' }}
+                style={{ padding: '8px 12px 8px 32px', fontSize: '0.82rem', borderRadius: '24px', background: 'rgba(0,0,0,0.02)' }}
               />
             </div>
 
@@ -786,7 +786,7 @@ export default function App() {
               alignItems: 'center',
               flexWrap: 'wrap',
               gap: '10px',
-              background: isTimerRunning ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.035)',
+              background: isTimerRunning ? 'rgba(16, 185, 129, 0.12)' : 'rgba(0,0,0,0.03)',
               border: `1px solid ${isTimerRunning ? '#34d399' : 'var(--border-subtle)'}`,
               borderRadius: '24px',
               padding: '6px 14px',
@@ -806,7 +806,7 @@ export default function App() {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#fff',
+                  color: 'var(--text-main)',
                   fontWeight: 700,
                   fontSize: '0.8rem',
                   cursor: isTimerRunning ? 'not-allowed' : 'pointer',
@@ -881,7 +881,7 @@ export default function App() {
                 }}
                 style={{ 
                   background: isTimerRunning ? '#fb7185' : 'linear-gradient(135deg, #10b981, #059669)', 
-                  color: '#fff', 
+                  color: 'var(--text-main)', 
                   border: 'none', 
                   borderRadius: '18px', 
                   padding: '6px 12px', 
@@ -944,7 +944,7 @@ export default function App() {
             right: '28px',
             zIndex: 9999,
             background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-            color: '#fff',
+            color: 'var(--text-main)',
             padding: '10px 18px',
             borderRadius: '10px',
             boxShadow: '0 8px 24px rgba(16, 185, 129, 0.35)',
@@ -980,7 +980,7 @@ export default function App() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   {/* Notification Panel */}
                   {myNotifications.length > 0 && (
-                    <div style={{ background: myUnreadCount > 0 ? 'rgba(251, 191, 36, 0.08)' : 'rgba(255,255,255,0.02)', border: `1px solid ${myUnreadCount > 0 ? 'rgba(251, 191, 36, 0.3)' : 'var(--border-subtle)'}`, borderRadius: '12px', padding: '16px' }}>
+                    <div style={{ background: myUnreadCount > 0 ? 'rgba(251, 191, 36, 0.08)' : 'rgba(0,0,0,0.02)', border: `1px solid ${myUnreadCount > 0 ? 'rgba(251, 191, 36, 0.3)' : 'var(--border-subtle)'}`, borderRadius: '12px', padding: '16px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <span style={{ fontSize: '1.1rem' }}>🔔</span>
@@ -1001,7 +1001,7 @@ export default function App() {
                           <div key={n.id} style={{ 
                             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                             padding: '8px 12px', borderRadius: '8px', fontSize: '0.82rem',
-                            background: isRead ? 'rgba(255,255,255,0.02)' : 'rgba(251, 191, 36, 0.1)',
+                            background: isRead ? 'rgba(0,0,0,0.02)' : 'rgba(251, 191, 36, 0.1)',
                             border: `1px solid ${isRead ? 'transparent' : 'rgba(251, 191, 36, 0.15)'}`,
                             fontWeight: isRead ? 400 : 600
                           }}>
@@ -1206,7 +1206,7 @@ export default function App() {
                                 </td>
                                 <td>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '3px 6px', borderRadius: '4px' }}>{assignee?.avatar || '--'}</span>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 800, background: 'rgba(0,0,0,0.04)', padding: '3px 6px', borderRadius: '4px' }}>{assignee?.avatar || '--'}</span>
                                     <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>{assignee ? assignee.name.split(' ')[0] : 'Unassigned'}</span>
                                   </div>
                                 </td>
@@ -1248,7 +1248,7 @@ export default function App() {
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                          <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                          <div style={{ padding: '14px', background: 'rgba(0,0,0,0.02)', borderRadius: '8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>
                             No recent activity recorded.
                           </div>
                         </div>
@@ -1357,7 +1357,7 @@ export default function App() {
                     return (
                       <>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                          <span style={{ fontSize: '1rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '8px 12px', borderRadius: '8px' }}>
+                          <span style={{ fontSize: '1rem', fontWeight: 800, background: 'rgba(0,0,0,0.04)', padding: '8px 12px', borderRadius: '8px' }}>
                             {empAvatar}
                           </span>
                           <div>
@@ -1365,7 +1365,7 @@ export default function App() {
                               <span className="badge badge-gold" style={{ fontSize: '0.7rem' }}>WORKSTATION TRACKING ACTIVE</span>
                               <span className="badge badge-emerald" style={{ fontSize: '0.7rem' }}>{prodScore}</span>
                             </div>
-                            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', marginTop: '4px' }}>
+                            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '4px' }}>
                               {empName} • <span style={{ fontSize: '0.88rem', color: 'var(--text-muted)', fontWeight: 600 }}>{empRole}</span>
                             </h3>
                             <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px', flexWrap: 'wrap' }}>
@@ -1400,7 +1400,7 @@ export default function App() {
                         <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: stage.color, display: 'inline-block' }}></span>
                         {stage.title}
                       </span>
-                      <span className="badge" style={{ background: 'rgba(255,255,255,0.06)' }}>{stageJobs.length}</span>
+                      <span className="badge" style={{ background: 'rgba(0,0,0,0.02)' }}>{stageJobs.length}</span>
                     </div>
 
                     <div className="kanban-col-body">
@@ -1422,7 +1422,7 @@ export default function App() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px' }}>
                               <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.25' }}>{job.title}</span>
                               {job.cancellationRequested ? (
-                                <span className="badge" style={{ background: '#ef4444', color: '#fff' }}>Cancel Req</span>
+                                <span className="badge" style={{ background: '#ef4444', color: 'var(--text-main)' }}>Cancel Req</span>
                               ) : job.isOverdue ? (
                                 <span className="badge badge-urgent">Overdue</span>
                               ) : null}
@@ -1464,7 +1464,7 @@ export default function App() {
                                   marginTop: '8px',
                                   padding: '6px 10px',
                                   background: 'linear-gradient(135deg, #10b981, #059669)',
-                                  color: '#fff',
+                                  color: 'var(--text-main)',
                                   border: 'none',
                                   borderRadius: '8px',
                                   fontSize: '0.74rem',
@@ -1482,10 +1482,10 @@ export default function App() {
                               </button>
                             ) : null}
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid rgba(0,0,0,0.02)' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                  <span style={{ fontSize: '0.82rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '2px 5px', borderRadius: '4px' }}>{assignee?.avatar || '--'}</span>
+                                  <span style={{ fontSize: '0.82rem', fontWeight: 800, background: 'rgba(0,0,0,0.04)', padding: '2px 5px', borderRadius: '4px' }}>{assignee?.avatar || '--'}</span>
                                   <span style={{ fontSize: '0.8rem', fontWeight: 600, color: assignee?.roleType === 'freelance' ? 'var(--accent-gold)' : 'var(--text-main)' }}>
                                     {assignee ? (assignee.roleType === 'freelance' ? '[Freelance Pool]' : assignee.name.split(' ')[0]) : 'Unassigned'}
                                   </span>
@@ -1629,9 +1629,9 @@ export default function App() {
                     <tr key={m.id}>
                       <td style={{ minWidth: '220px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <span style={{ fontSize: '0.86rem', fontWeight: 800, background: 'rgba(255,255,255,0.08)', padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>{m.avatar}</span>
+                          <span style={{ fontSize: '0.86rem', fontWeight: 800, background: 'rgba(0,0,0,0.04)', padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>{m.avatar}</span>
                           <div>
-                            <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#fff' }}>{m.name}</div>
+                            <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-main)' }}>{m.name}</div>
                             <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px' }}>{m.role} • <strong style={{ color: 'var(--accent-gold)' }}>{m.workstationPC || 'Seat'}</strong></div>
                           </div>
                         </div>
@@ -1662,7 +1662,7 @@ export default function App() {
                           {m.appUsage.premierePro > 0 && <span className="badge badge-normal" style={{ whiteSpace: 'nowrap', fontSize: '0.72rem' }}>Premiere: {m.appUsage.premierePro}h</span>}
                           {m.appUsage.afterEffects > 0 && <span className="badge badge-cyan" style={{ whiteSpace: 'nowrap', fontSize: '0.72rem' }}>AE: {m.appUsage.afterEffects}h</span>}
                           {m.appUsage.photoshop > 0 && <span className="badge badge-gold" style={{ whiteSpace: 'nowrap', fontSize: '0.72rem' }}>Photoshop: {m.appUsage.photoshop}h</span>}
-                          {m.appUsage.idleAway > 0 && <span className="badge" style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', whiteSpace: 'nowrap', fontSize: '0.72rem' }}>Idle: {m.appUsage.idleAway}h</span>}
+                          {m.appUsage.idleAway > 0 && <span className="badge" style={{ background: 'rgba(0,0,0,0.02)', color: 'var(--text-muted)', whiteSpace: 'nowrap', fontSize: '0.72rem' }}>Idle: {m.appUsage.idleAway}h</span>}
                         </div>
                       </td>
                       <td style={{ minWidth: '220px' }}>
@@ -1677,7 +1677,7 @@ export default function App() {
                           </button>
                           <button 
                             className="btn-primary" 
-                            style={{ padding: '6px 12px', fontSize: '0.76rem', background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', whiteSpace: 'nowrap', color: '#fff', border: 'none' }}
+                            style={{ padding: '6px 12px', fontSize: '0.76rem', background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', whiteSpace: 'nowrap', color: 'var(--text-main)', border: 'none' }}
                             onClick={() => {
                               setSelectedEmployeeFilter(m.id);
                               setActiveTab('kanban');
@@ -1832,13 +1832,13 @@ export default function App() {
                     <div key={post.id} className="social-card">
                       <div style={{ height: '160px', backgroundSize: 'cover', backgroundPosition: 'center', backgroundImage: `linear-gradient(to top, rgba(11,13,19,0.9), transparent), url(${post.thumbnailUrl})`, padding: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span className="badge" style={{ background: 'rgba(0,0,0,0.7)', color: '#fff', backdropFilter: 'blur(6px)' }}>
+                          <span className="badge" style={{ background: 'rgba(0,0,0,0.7)', color: 'var(--text-main)', backdropFilter: 'blur(6px)' }}>
                             <SocialBrandIcon platform={post.platform} />
                             <span>{post.platform}</span>
                           </span>
                           <span className="badge badge-gold" style={{ fontSize: '0.68rem' }}>{client?.name.substring(0, 16)}...</span>
                         </div>
-                        <h4 style={{ fontSize: '0.95rem', color: '#fff', lineHeight: '1.2' }}>{post.title}</h4>
+                        <h4 style={{ fontSize: '0.95rem', color: 'var(--text-main)', lineHeight: '1.2' }}>{post.title}</h4>
                       </div>
 
                       <div style={{ padding: '14px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '10px' }}>
@@ -1846,7 +1846,7 @@ export default function App() {
                           {post.contentCaption}
                         </p>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid rgba(0,0,0,0.02)' }}>
                           <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>{post.postDate}</span>
                           {post.status === 'Scheduled' && <span className="badge badge-cyan">Scheduled</span>}
                           {post.status === 'Owner Approved' && <span className="badge badge-emerald">Approved</span>}
@@ -1914,15 +1914,15 @@ export default function App() {
                     <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fb7185' }}>Drive Account #1 (Master Raw Dump)</span>
                     <span className="badge badge-urgent" style={{ fontSize: '0.65rem' }}>Active SD Ingest</span>
                   </div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>{driveAccount1}</div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount1}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
                     <span>4.1 TB / 5.0 TB Used</span>
                     <strong style={{ color: '#fb7185' }}>82% Full</strong>
                   </div>
-                  <div style={{ background: 'rgba(255,255,255,0.1)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{ width: '82%', height: '100%', background: '#fb7185' }}></div>
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '6px' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: All Cam A/B/C Master 4K SD Card Dumps (`/RawFootage`)
                   </div>
                 </div>
@@ -1932,15 +1932,15 @@ export default function App() {
                     <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fcd34d' }}>Drive Account #2 (Active Edits Vault)</span>
                     <span className="badge badge-gold" style={{ fontSize: '0.65rem' }}>Workstation Active</span>
                   </div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>{driveAccount2}</div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount2}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
                     <span>2.8 TB / 5.0 TB Used</span>
                     <strong style={{ color: '#fcd34d' }}>56% Full</strong>
                   </div>
-                  <div style={{ background: 'rgba(255,255,255,0.1)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{ width: '56%', height: '100%', background: '#fcd34d' }}></div>
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '6px' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: Premiere Pro Projects, Proxy Files & Scratch Disks (`/Edits`)
                   </div>
                 </div>
@@ -1950,15 +1950,15 @@ export default function App() {
                     <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#34d399' }}>Drive Account #3 (Client Deliverables)</span>
                     <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>Review & Archive</span>
                   </div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>{driveAccount3}</div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount3}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
                     <span>1.2 TB / 5.0 TB Used</span>
                     <strong style={{ color: '#34d399' }}>24% Full</strong>
                   </div>
-                  <div style={{ background: 'rgba(255,255,255,0.1)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{ width: '24%', height: '100%', background: '#34d399' }}></div>
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '6px' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: Final 4K Reels, Master Exports & Retouched Photos (`/FinalDelivery`)
                   </div>
                 </div>
@@ -2273,7 +2273,7 @@ export default function App() {
                       <span>⏳ Turnaround Clock Active</span>
                     </div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '4px' }}>
-                      Accepted & Started at: <strong style={{ color: '#fff' }}>{showJobDetailModal.acceptedAt}</strong> (Target SLA: {showJobDetailModal.turnaroundSLA}h)
+                      Accepted & Started at: <strong style={{ color: 'var(--text-main)' }}>{showJobDetailModal.acceptedAt}</strong> (Target SLA: {showJobDetailModal.turnaroundSLA}h)
                     </div>
                   </div>
                   <span className="badge badge-emerald" style={{ fontSize: '0.8rem', padding: '6px 12px' }}>Ticking Live</span>
@@ -2300,7 +2300,7 @@ export default function App() {
                     style={{
                       padding: '10px 18px',
                       background: 'linear-gradient(135deg, #10b981, #059669)',
-                      color: '#fff',
+                      color: 'var(--text-main)',
                       border: 'none',
                       borderRadius: '8px',
                       fontSize: '0.85rem',
@@ -2319,7 +2319,7 @@ export default function App() {
               ) : null}
 
               {/* Handoff Resources & Cloud Links */}
-              <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '12px' }}>
+              <div style={{ background: 'rgba(0,0,0,0.02)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '12px' }}>
                 <h4 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '8px', color: 'var(--accent-gold)' }}>PRODUCTION ASSETS</h4>
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', fontSize: '0.8rem' }}>
                   <a href={showJobDetailModal.driveDeliverableLink || driveUrl1} target="_blank" rel="noreferrer" style={{ color: '#67e8f9', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -2390,7 +2390,7 @@ export default function App() {
                   </p>
                   {isManagerOrOwner ? (
                     <div style={{ display: 'flex', gap: '10px' }}>
-                      <button className="btn-secondary" style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none' }} onClick={() => handleApproveCancellation(showJobDetailModal.id)}>
+                      <button className="btn-secondary" style={{ backgroundColor: '#ef4444', color: 'var(--text-main)', border: 'none' }} onClick={() => handleApproveCancellation(showJobDetailModal.id)}>
                         Approve Cancellation (Unassign)
                       </button>
                       <button className="btn-secondary" onClick={() => handleRejectCancellation(showJobDetailModal.id)}>
@@ -2454,7 +2454,7 @@ export default function App() {
                 <h4 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-muted)' }}>PRODUCTION LOG</h4>
                 <div style={{ background: 'var(--bg-dark)', borderRadius: '8px', padding: '10px', maxHeight: '120px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.78rem' }}>
                   {showJobDetailModal.notes.map((n, i) => (
-                    <div key={i} style={{ padding: '4px 0', borderBottom: i < showJobDetailModal.notes.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
+                    <div key={i} style={{ padding: '4px 0', borderBottom: i < showJobDetailModal.notes.length - 1 ? '1px solid rgba(0,0,0,0.02)' : 'none' }}>
                       {n}
                     </div>
                   ))}
@@ -2820,7 +2820,7 @@ export default function App() {
             <div className="modal-header" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '16px' }}>
               <div>
                 <span className="badge badge-gold" style={{ marginBottom: '6px' }}>Admin 1-Click Deployment</span>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }}>⚡ Configure PC / Mac Seat</h3>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)' }}>⚡ Configure PC / Mac Seat</h3>
               </div>
               <button className="btn-secondary" onClick={() => setShowWorkstationConfigModal(false)}>✕</button>
             </div>
@@ -2864,8 +2864,8 @@ export default function App() {
                       padding: '12px',
                       borderRadius: '12px',
                       border: `2px solid ${configOsType === 'windows' ? 'var(--accent-gold)' : 'var(--border-subtle)'}`,
-                      background: configOsType === 'windows' ? 'rgba(226, 183, 20, 0.15)' : 'rgba(255,255,255,0.02)',
-                      color: '#fff',
+                      background: configOsType === 'windows' ? 'rgba(226, 183, 20, 0.15)' : 'rgba(0,0,0,0.02)',
+                      color: 'var(--text-main)',
                       fontWeight: 700,
                       cursor: 'pointer',
                       textAlign: 'center'
@@ -2880,8 +2880,8 @@ export default function App() {
                       padding: '12px',
                       borderRadius: '12px',
                       border: `2px solid ${configOsType === 'mac' ? '#06b6d4' : 'var(--border-subtle)'}`,
-                      background: configOsType === 'mac' ? 'rgba(6, 182, 212, 0.15)' : 'rgba(255,255,255,0.02)',
-                      color: '#fff',
+                      background: configOsType === 'mac' ? 'rgba(6, 182, 212, 0.15)' : 'rgba(0,0,0,0.02)',
+                      color: 'var(--text-main)',
                       fontWeight: 700,
                       cursor: 'pointer',
                       textAlign: 'center'
@@ -2893,8 +2893,8 @@ export default function App() {
               </div>
 
               {/* Step 3: Action Buttons */}
-              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', borderRadius: '14px', padding: '16px' }}>
-                <label style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 700, display: 'block', marginBottom: '12px' }}>
+              <div style={{ background: 'rgba(0,0,0,0.02)', border: '1px solid var(--border-subtle)', borderRadius: '14px', padding: '16px' }}>
+                <label style={{ fontSize: '0.82rem', color: 'var(--text-main)', fontWeight: 700, display: 'block', marginBottom: '12px' }}>
                   3. Admin 1-Click Deployment Actions
                 </label>
 
