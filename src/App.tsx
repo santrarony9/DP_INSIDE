@@ -135,7 +135,7 @@ export default function App() {
 
   // Form states for New Job
   const [newJobTitle, setNewJobTitle] = useState('');
-  const [newJobClient, setNewJobClient] = useState(INITIAL_CLIENTS[0]?.id || '');
+  const [newJobClient, setNewJobClient] = useState('');
   const [newJobEstimatedHours, setNewJobEstimatedHours] = useState<number>(4);
   const [showAddFreelancerModal, setShowAddFreelancerModal] = useState<boolean>(false);
   const [newFlName, setNewFlName] = useState<string>('');
@@ -153,7 +153,7 @@ export default function App() {
 
   // Form states for New Social Post
   const [newPostTitle, setNewPostTitle] = useState('');
-  const [newPostClient, setNewPostClient] = useState(INITIAL_CLIENTS[0]?.id || '');
+  const [newPostClient, setNewPostClient] = useState('');
   const [newPostPlatform, setNewPostPlatform] = useState<'Facebook' | 'Instagram' | 'YouTube'>('Instagram');
   const [newPostDate, setNewPostDate] = useState('2026-07-21 18:00');
 
@@ -162,7 +162,7 @@ export default function App() {
   const [newCliName, setNewCliName] = useState('');
   const [newCliStorageType, setNewCliStorageType] = useState<'local' | 'drive'>('drive');
   const [newCliStoragePath, setNewCliStoragePath] = useState('https://drive.google.com/drive/folders/master-raw');
-  const [newCliAssignee, setNewCliAssignee] = useState(INITIAL_TEAM[0]?.id || '');
+  const [newCliAssignee, setNewCliAssignee] = useState('');
   const [newCliNotes, setNewCliNotes] = useState('Deliver initial 4K cut within 48 hours. Sync lapel mic audio.');
 
 
@@ -2364,7 +2364,8 @@ export default function App() {
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <input type="text" placeholder="Shoot Title *" value={newJobTitle} onChange={(e) => setNewJobTitle(e.target.value)} className="input-field" required />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
-                  <select value={newJobClient} onChange={(e) => setNewJobClient(e.target.value)} className="input-field">
+                  <select value={newJobClient} onChange={(e) => setNewJobClient(e.target.value)} className="input-field" required>
+                    <option value="" disabled>Select Client...</option>
                     {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
@@ -2433,7 +2434,8 @@ export default function App() {
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <input type="text" placeholder="Campaign Title *" value={newPostTitle} onChange={(e) => setNewPostTitle(e.target.value)} className="input-field" required />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <select value={newPostClient} onChange={(e) => setNewPostClient(e.target.value)} className="input-field">
+                  <select value={newPostClient} onChange={(e) => setNewPostClient(e.target.value)} className="input-field" required>
+                    <option value="" disabled>Select Client...</option>
                     {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                   <select value={newPostPlatform} onChange={(e: any) => setNewPostPlatform(e.target.value)} className="input-field">
@@ -2496,6 +2498,7 @@ export default function App() {
                     3. Whom to Assign (`Internal PC Seat or Freelance Contractor`) *
                   </label>
                   <select value={newCliAssignee} onChange={(e) => setNewCliAssignee(e.target.value)} className="input-field" required>
+                    <option value="" disabled>Select Assignee...</option>
                     <optgroup label="Internal Workstation Staff (`Full-Time`)">
                       {team.filter((t) => t.roleType === 'editor' || t.roleType === 'manager').map((t) => (
                         <option key={t.id} value={t.id}>{t.name} • {t.role} ({t.workstationPC || 'Office Seat'})</option>
