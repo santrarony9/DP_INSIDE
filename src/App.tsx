@@ -1488,9 +1488,7 @@ export default function App() {
                   <tr>
                     <th>Workstation Employee</th>
                     <th>Status</th>
-                    <th>Active Project Tagged</th>
-                    <th>Wk Hours</th>
-                    <th>Active Productivity %</th>
+                    <th>Active Projects</th>
                     <th>Software Breakdown (`Proof of Work`)</th>
                     <th>Audit Action</th>
                   </tr>
@@ -1519,22 +1517,15 @@ export default function App() {
                         )}
                       </td>
                       <td style={{ minWidth: '200px' }}>
-                        {m.activeProjectTitle ? (
-                          <span style={{ color: '#67e8f9', fontWeight: 700, fontSize: '0.84rem', display: 'block', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.activeProjectTitle}</span>
-                        ) : (
-                          <span style={{ color: 'var(--text-dim)', fontStyle: 'italic', fontSize: '0.82rem' }}>No active tag</span>
-                        )}
-                      </td>
-                      <td style={{ minWidth: '120px' }}>
-                        <strong style={{ fontSize: '1.05rem', color: '#fff' }}>{m.weeklyHoursLogged}h</strong>
-                        <div style={{ fontSize: '0.72rem', color: 'var(--accent-cyan)', fontWeight: 600, marginTop: '2px' }}>Fixed / Monthly</div>
-                      </td>
-                      <td style={{ minWidth: '160px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{ flex: 1, background: 'rgba(255,255,255,0.08)', borderRadius: '10px', height: '8px', minWidth: '80px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
-                            <div style={{ width: `${m.productivityScore}%`, height: '100%', background: m.productivityScore >= 90 ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #f59e0b, #fbbf24)' }}></div>
-                          </div>
-                          <span style={{ fontWeight: 800, fontSize: '0.86rem', color: m.productivityScore >= 90 ? '#34d399' : '#fcd34d' }}>{m.productivityScore}%</span>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                          {Array.from({ length: jobs.filter(j => j.assignedTo === m.id).length }).map((_, i) => (
+                            <div key={i} style={{ background: 'rgba(103, 232, 249, 0.1)', padding: '4px', borderRadius: '4px', border: '1px solid rgba(103, 232, 249, 0.2)' }}>
+                              <FolderGit2 size={14} color="#67e8f9" />
+                            </div>
+                          ))}
+                          {jobs.filter(j => j.assignedTo === m.id).length === 0 && (
+                            <span style={{ color: 'var(--text-dim)', fontStyle: 'italic', fontSize: '0.82rem' }}>No active tag</span>
+                          )}
                         </div>
                       </td>
                       <td style={{ minWidth: '240px', maxWidth: '300px' }}>
