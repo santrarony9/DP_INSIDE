@@ -76,6 +76,7 @@ export interface JobCard {
   assignedBy: string; // TeamMember id (Aditya or Saurav)
   assignedFreelancerName?: string; // If assigned to Freelance Pool, which specific freelancer?
   freelanceCost?: number; // Estimated/Actual cost for this contractor
+  freelanceDeadlineDate?: string; // Estimated Delivery Date (Date string)
   estimatedHours: number; // e.g. 2 hours edit work
   loggedHours: number; // e.g. 18.5 hours (overdue anomaly!)
   turnaroundSLA: number; // target hours from start to finish

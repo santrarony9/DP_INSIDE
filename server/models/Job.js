@@ -12,6 +12,7 @@ const jobSchema = new mongoose.Schema({
   assignedBy: { type: String },
   assignedFreelancerName: { type: String },
   freelanceCost: { type: Number },
+  freelanceDeadlineDate: { type: String },
   estimatedHours: { type: Number, default: 4 },
   loggedHours: { type: Number, default: 0 },
   turnaroundSLA: { type: Number, default: 48 },

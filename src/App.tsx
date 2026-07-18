@@ -132,6 +132,9 @@ export default function App() {
 
   // Form states for New Job
   const [newJobTitle, setNewJobTitle] = useState('');
+  const [freelanceCostInput, setFreelanceCostInput] = useState<number | ''>('');
+  const [freelanceDeadlineInput, setFreelanceDeadlineInput] = useState<string>('');
+  const [selectedAssigneeId, setSelectedAssigneeId] = useState<string>('');
   const [newJobClient, setNewJobClient] = useState('');
   const [newJobEstimatedHours, setNewJobEstimatedHours] = useState<number>(4);
   const [showAddFreelancerModal, setShowAddFreelancerModal] = useState<boolean>(false);
@@ -909,7 +912,7 @@ export default function App() {
             </div>
 
             {/* Action Buttons */}
-            {(activeTab === 'kanban' || activeTab === 'overview') && isManagerOrOwner && (
+            {(activeTab === 'kanban' || activeTab === 'overview') && (
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button className="btn-primary" onClick={() => setShowNewJobModal(true)}>
                   <Plus size={15} />
@@ -2346,29 +2349,66 @@ export default function App() {
               {isManagerOrOwner && showJobDetailModal.stage === 'unassigned' && (
                 <div style={{ background: 'rgba(6, 182, 212, 0.1)', border: '1px solid #0284c7', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
                   <h4 style={{ color: '#0284c7', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Assign Project:</h4>
-                  <div style={{ display: 'flex', gap: '10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
                     <select 
                       className="input-field" 
-                      onChange={(e) => {
-                        const newAssignee = e.target.value;
-                        if(newAssignee) {
+                      value={selectedAssigneeId}
+                      onChange={(e) => setSelectedAssigneeId(e.target.value)}
+                    >
+                      <option value="">Select Editor / Freelancer...</option>
+                      {team.filter((t) => t.roleType !== 'owner').map((t) => (
+                        <option key={t.id} value={t.id}>{t.name} ({t.roleType})</option>
+                      ))}
+                    </select>
+
+                    {selectedAssigneeId && team.find(t => t.id === selectedAssigneeId)?.roleType === 'freelance' && (
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <input 
+                          type="number" 
+                          placeholder="Agreed Cost ($)" 
+                          className="input-field" 
+                          style={{ flex: 1 }}
+                          value={freelanceCostInput}
+                          onChange={(e) => setFreelanceCostInput(e.target.value ? Number(e.target.value) : '')}
+                        />
+                        <input 
+                          type="date" 
+                          className="input-field" 
+                          style={{ flex: 1 }}
+                          value={freelanceDeadlineInput}
+                          onChange={(e) => setFreelanceDeadlineInput(e.target.value)}
+                        />
+                      </div>
+                    )}
+
+                    {selectedAssigneeId && (
+                      <button 
+                        className="btn-primary" 
+                        onClick={() => {
+                          const assignee = team.find(t => t.id === selectedAssigneeId);
+                          const isFreelance = assignee?.roleType === 'freelance';
+                          if (isFreelance && (!freelanceCostInput || !freelanceDeadlineInput)) {
+                            triggerAlert('Please enter cost and delivery date for freelancer.');
+                            return;
+                          }
                           updateJob(showJobDetailModal.id, {
                             ...showJobDetailModal,
                             stage: 'assigned',
-                            assignedTo: newAssignee,
-                            notes: [...showJobDetailModal.notes, `[ASSIGNED by ${currentUser?.name} on ${new Date().toLocaleString()}] to ${team.find(t=>t.id===newAssignee)?.name}`]
+                            assignedTo: selectedAssigneeId,
+                            freelanceCost: isFreelance ? Number(freelanceCostInput) : undefined,
+                            freelanceDeadlineDate: isFreelance ? freelanceDeadlineInput : undefined,
+                            notes: [...showJobDetailModal.notes, `[ASSIGNED by ${currentUser?.name} on ${new Date().toLocaleString()}] to ${assignee?.name} ${isFreelance ? `for $${freelanceCostInput} due ${freelanceDeadlineInput}` : ''}`]
                           });
-                          // Notification is now derived from job notes
                           setShowJobDetailModal(null);
+                          setSelectedAssigneeId('');
+                          setFreelanceCostInput('');
+                          setFreelanceDeadlineInput('');
                           triggerAlert('Project assigned successfully.');
-                        }
-                      }}
-                    >
-                      <option value="">Select Editor...</option>
-                      {team.filter((t) => t.roleType !== 'owner').map((t) => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
-                      ))}
-                    </select>
+                        }}
+                      >
+                        Confirm Assignment
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -2645,26 +2685,27 @@ export default function App() {
                   </div>
                 </div>
 
-                <div>
-                  <label style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
-                    3. Whom to Assign (`Internal PC Seat or Freelance Contractor`) *
-                  </label>
-                  <select value={newCliAssignee} onChange={(e) => setNewCliAssignee(e.target.value)} className="input-field" required>
-                    <option value="" disabled>Select Assignee...</option>
-                    <optgroup label="Internal Workstation Staff (`Full-Time`)">
-                      {team.filter((t) => t.roleType === 'editor' || t.roleType === 'manager').map((t) => (
-                        <option key={t.id} value={t.id}>{t.name} • {t.role} ({t.workstationPC || 'Office Seat'})</option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Freelance Contractor Pool (`Fixed Project Mode`)">
-                      {(team.find(t => t.id === 'usr-freelance-pool')?.freelancerPoolRoster || []).map((fl) => (
-                        <option key={fl.id} value={`usr-freelance-pool`}>
-                          [Freelance Pool] • {fl.name} ({fl.specialty})
-                        </option>
-                      ))}
-                    </optgroup>
-                  </select>
-                </div>
+
+                {isManagerOrOwner && (
+                  <div>
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                      3. Whom to Assign ('Internal PC Seat or Freelance Contractor')
+                    </label>
+                    <select value={newCliAssignee} onChange={(e) => setNewCliAssignee(e.target.value)} className="input-field">
+                      <option value="">Assign Later...</option>
+                      <optgroup label="Internal Workstation Staff ('Full-Time')">
+                        {team.filter((t) => t.roleType === 'editor' || t.roleType === 'manager').map((t) => (
+                          <option key={t.id} value={t.id}>{t.name} • {t.role} ({t.workstationPC || 'Office Seat'})</option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="External Freelance Pool">
+                        {team.filter((t) => t.roleType === 'freelance').map((t) => (
+                          <option key={t.id} value={t.id}>{t.name} (Remote Contractor)</option>
+                        ))}
+                      </optgroup>
+                    </select>
+                  </div>
+                )}
 
                 <div>
                   <label style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
