@@ -1553,8 +1553,8 @@ export default function App() {
                 </div>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <button 
-                    className="btn-primary" 
-                    style={{ background: '#1877f2', color: '#ffffff', fontWeight: 800, padding: '8px 16px', fontSize: '0.82rem' }} 
+                    className="btn-secondary" 
+                    style={{ padding: '8px 16px', fontSize: '0.82rem' }} 
                     onClick={() => setShowWorkstationConfigModal(true)}
                   >
                     <span>⚡ Configure Devices</span>
@@ -1724,7 +1724,7 @@ export default function App() {
                     </div>
                   </div>
                   {isManagerOrOwner && (
-                    <button className="btn-primary" style={{ padding: '6px 14px', fontSize: '0.78rem' }} onClick={() => setShowAddFreelancerModal(true)}>
+                    <button className="btn-secondary" style={{ padding: '6px 14px', fontSize: '0.78rem' }} onClick={() => setShowAddFreelancerModal(true)}>
                       <Plus size={14} />
                       <span>Add Contractor to Pool</span>
                     </button>
