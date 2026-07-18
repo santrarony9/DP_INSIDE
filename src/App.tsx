@@ -2369,7 +2369,7 @@ export default function App() {
                       }}
                     >
                       <option value="">Select Editor...</option>
-                      {team.filter((t) => t.roleType === 'editor' || t.roleType === 'freelance').map((t) => (
+                      {team.filter((t) => t.roleType !== 'owner').map((t) => (
                         <option key={t.id} value={t.id}>{t.name}</option>
                       ))}
                     </select>

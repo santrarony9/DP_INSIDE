@@ -7,8 +7,8 @@ interface AnalyticsDashboardProps {
 }
 
 const AnalyticsDashboard = ({ team, jobs }: AnalyticsDashboardProps) => {
-  // Only calculate analytics for editors and freelancers, not owners/managers unless they edit
-  const editors = team.filter((t) => t.roleType === 'editor' || t.roleType === 'freelance');
+  // Calculate analytics for all team members except owners
+  const editors = team.filter((t) => t.roleType !== 'owner');
 
   const calculateMetrics = (empId: string) => {
     // If it's the freelance pool, we might want to break it down, but for now we treat it as one bucket
