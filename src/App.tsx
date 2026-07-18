@@ -1936,54 +1936,42 @@ export default function App() {
 
               {/* 3 Connected 5TB Drive Account Storage Meters */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px', marginBottom: '28px' }}>
-                <div style={{ background: 'rgba(244, 63, 94, 0.08)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '12px', padding: '16px' }}>
+                <div style={{ background: driveAccount1 ? 'rgba(244, 63, 94, 0.08)' : 'rgba(0,0,0,0.02)', border: driveAccount1 ? '1px solid rgba(244, 63, 94, 0.3)' : '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#e11d48' }}>Drive Account #1 (Master Raw Dump)</span>
-                    <span className="badge badge-urgent" style={{ fontSize: '0.65rem' }}>Active SD Ingest</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: driveAccount1 ? '#e11d48' : 'var(--text-muted)' }}>Drive Account #1 (Master Raw Dump)</span>
+                    <span className="badge" style={{ fontSize: '0.65rem', background: driveAccount1 ? '#e11d48' : '#e2e8f0', color: driveAccount1 ? 'white' : 'black' }}>{driveAccount1 ? 'Active' : 'Not Connected'}</span>
                   </div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount1}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                    <span>4.1 TB / 5.0 TB Used</span>
-                    <strong style={{ color: '#e11d48' }}>82% Full</strong>
-                  </div>
-                  <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '82%', height: '100%', background: '#e11d48' }}></div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount1 || 'No Account Configured'}</div>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                    {driveAccount1 ? 'Waiting for OAuth connection to fetch live quota metrics.' : 'Click "Connect / Manage Drive Accounts" to link this vault.'}
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: All Cam A/B/C Master 4K SD Card Dumps (`/RawFootage`)
                   </div>
                 </div>
 
-                <div style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '12px', padding: '16px' }}>
+                <div style={{ background: driveAccount2 ? 'rgba(245, 158, 11, 0.08)' : 'rgba(0,0,0,0.02)', border: driveAccount2 ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#d97706' }}>Drive Account #2 (Active Edits Vault)</span>
-                    <span className="badge badge-gold" style={{ fontSize: '0.65rem' }}>Workstation Active</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: driveAccount2 ? '#d97706' : 'var(--text-muted)' }}>Drive Account #2 (Active Edits Vault)</span>
+                    <span className="badge" style={{ fontSize: '0.65rem', background: driveAccount2 ? '#d97706' : '#e2e8f0', color: driveAccount2 ? 'white' : 'black' }}>{driveAccount2 ? 'Active' : 'Not Connected'}</span>
                   </div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount2}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                    <span>2.8 TB / 5.0 TB Used</span>
-                    <strong style={{ color: '#d97706' }}>56% Full</strong>
-                  </div>
-                  <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '56%', height: '100%', background: '#d97706' }}></div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount2 || 'No Account Configured'}</div>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                    {driveAccount2 ? 'Waiting for OAuth connection to fetch live quota metrics.' : 'Click "Connect / Manage Drive Accounts" to link this vault.'}
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: Premiere Pro Projects, Proxy Files & Scratch Disks (`/Edits`)
                   </div>
                 </div>
 
-                <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '12px', padding: '16px' }}>
+                <div style={{ background: driveAccount3 ? 'rgba(16, 185, 129, 0.08)' : 'rgba(0,0,0,0.02)', border: driveAccount3 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16a34a' }}>Drive Account #3 (Client Deliverables)</span>
-                    <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>Review & Archive</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: driveAccount3 ? '#16a34a' : 'var(--text-muted)' }}>Drive Account #3 (Client Deliverables)</span>
+                    <span className="badge" style={{ fontSize: '0.65rem', background: driveAccount3 ? '#16a34a' : '#e2e8f0', color: driveAccount3 ? 'white' : 'black' }}>{driveAccount3 ? 'Active' : 'Not Connected'}</span>
                   </div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount3}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                    <span>1.2 TB / 5.0 TB Used</span>
-                    <strong style={{ color: '#16a34a' }}>24% Full</strong>
-                  </div>
-                  <div style={{ background: 'rgba(0,0,0,0.05)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '24%', height: '100%', background: '#16a34a' }}></div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '6px' }}>{driveAccount3 || 'No Account Configured'}</div>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                    {driveAccount3 ? 'Waiting for OAuth connection to fetch live quota metrics.' : 'Click "Connect / Manage Drive Accounts" to link this vault.'}
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', borderTop: '1px solid rgba(0,0,0,0.02)', paddingTop: '6px' }}>
                     Holds: Final 4K Reels, Master Exports & Retouched Photos (`/FinalDelivery`)
