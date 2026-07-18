@@ -1167,6 +1167,21 @@ export default function App() {
                         <span className="badge badge-gold">Synced</span>
                       </div>
                     </div>
+
+                    {/* NEW: Ready & Unassigned Inbox KPI */}
+                    <div className="kpi-card" style={{ borderLeft: '3px solid #7c3aed' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Ready & Unassigned Inbox</span>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#7c3aed', marginTop: '6px' }}>
+                          {jobs.filter(j => j.stage === 'unassigned' || j.stage === 'footage-received').length} Jobs
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                        <span>Awaiting assignment</span>
+                        <span className="badge" style={{ background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed', border: '1px solid rgba(124, 58, 237, 0.2)' }}>Pipeline</span>
+                      </div>
+                    </div>
+
                   </div>
 
                   {/* Side-by-Side Clean Dashboard Split */}
