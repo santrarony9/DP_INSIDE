@@ -911,13 +911,9 @@ export default function App() {
             {/* Action Buttons */}
             {(activeTab === 'kanban' || activeTab === 'overview') && isManagerOrOwner && (
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button className="btn-secondary" onClick={() => setShowAddClientModal(true)}>
-                  <Plus size={15} />
-                  <span>Add Client</span>
-                </button>
                 <button className="btn-primary" onClick={() => setShowNewJobModal(true)}>
                   <Plus size={15} />
-                  <span>New Shoot</span>
+                  <span>New Project</span>
                 </button>
               </div>
             )}
@@ -2513,12 +2509,12 @@ export default function App() {
         <div className="modal-overlay" onClick={() => setShowNewJobModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3 style={{ fontSize: '1.15rem' }}>CREATE NEW SHOOT CARD</h3>
+              <h3 style={{ fontSize: '1.15rem' }}>CREATE NEW PROJECT</h3>
               <button className="btn-secondary" onClick={() => setShowNewJobModal(false)}>✕</button>
             </div>
             <form onSubmit={handleCreateJob}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <input type="text" placeholder="Shoot Title *" value={newJobTitle} onChange={(e) => setNewJobTitle(e.target.value)} className="input-field" required />
+                <input type="text" placeholder="Project Title *" value={newJobTitle} onChange={(e) => setNewJobTitle(e.target.value)} className="input-field" required />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
                   <select value={newJobClient} onChange={(e) => setNewJobClient(e.target.value)} className="input-field" required>
                     <option value="" disabled>Select Client...</option>
