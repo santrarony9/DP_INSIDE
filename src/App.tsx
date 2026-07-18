@@ -135,6 +135,7 @@ export default function App() {
   const [freelanceCostInput, setFreelanceCostInput] = useState<number | ''>('');
   const [freelanceDeadlineInput, setFreelanceDeadlineInput] = useState<string>('');
   const [selectedAssigneeId, setSelectedAssigneeId] = useState<string>('');
+  const [selectedTotalParts, setSelectedTotalParts] = useState<number>(1);
   const [newJobClient, setNewJobClient] = useState('');
   const [newJobEstimatedHours, setNewJobEstimatedHours] = useState<number>(4);
   const [showAddFreelancerModal, setShowAddFreelancerModal] = useState<boolean>(false);
@@ -163,6 +164,7 @@ export default function App() {
   const [newCliStorageType, setNewCliStorageType] = useState<'local' | 'drive'>('drive');
   const [newCliStoragePath, setNewCliStoragePath] = useState('https://drive.google.com/drive/folders/master-raw');
   const [newCliAssignee, setNewCliAssignee] = useState('');
+  const [newCliTotalParts, setNewCliTotalParts] = useState<number>(1);
   const [newCliNotes, setNewCliNotes] = useState('Deliver initial 4K cut within 48 hours. Sync lapel mic audio.');
 
 
@@ -289,27 +291,29 @@ export default function App() {
   };
 
   const handleEditorSubmitProject = async (jobId: string) => {
-    if (!submissionUrl) {
-      triggerAlert('Please paste your final Google Drive or Dropbox deliverable link before submitting.');
-      return;
-    }
-    
     const targetJob = jobs.find(j => j.id === jobId);
     if (!targetJob) return;
 
+    const isPartialSubmission = (targetJob.totalParts || 1) > 1 && (targetJob.currentPart || 1) < (targetJob.totalParts || 1);
+
+    if (!isPartialSubmission && !submissionUrl) {
+      triggerAlert('Please paste your final Google Drive or Dropbox deliverable link before submitting.');
+      return;
+    }
+
     const updatedNotes = [
       ...targetJob.notes,
-      `[SUBMITTED BY ${currentUser?.name} on ${new Date().toLocaleString()}]: Deliverable Link: ${submissionUrl} | Notes: ${submissionNotes || 'No notes provided.'}`,
-      `[Turnaround Clock Completed at ${new Date().toLocaleTimeString()}]: Project closed within SLA window.`
+      `[SUBMITTED BY ${currentUser?.name} on ${new Date().toLocaleString()} (Part ${targetJob.currentPart || 1}/${targetJob.totalParts || 1})]: ${submissionUrl ? `Link: ${submissionUrl} | ` : ''}Notes: ${submissionNotes || 'No notes provided.'}`,
+      isPartialSubmission ? `[Part ${targetJob.currentPart || 1} Delivered]: Awaiting manager review for next part.` : `[Turnaround Clock Completed at ${new Date().toLocaleTimeString()}]: Project closed within SLA window.`
     ];
 
     await updateJob(jobId, {
       ...targetJob,
       stage: 'review',
-      submittedDeliverableUrl: submissionUrl,
+      submittedDeliverableUrl: submissionUrl || targetJob.submittedDeliverableUrl || '',
       submissionNotes: submissionNotes,
       submittedAt: new Date().toLocaleString(),
-      turnaroundClockStatus: 'Completed',
+      turnaroundClockStatus: isPartialSubmission ? 'Paused (Reviewing Part)' : 'Completed',
       notes: updatedNotes
     });
 
@@ -412,6 +416,8 @@ export default function App() {
       stage: 'unassigned',
       assignedTo: null,
       assignedBy: currentUser?.id || '',
+      totalParts: 1,
+      currentPart: 1,
       estimatedHours: Number(newJobEstimatedHours),
       loggedHours: 0,
       turnaroundSLA: Number(newJobEstimatedHours) * 12,
@@ -477,6 +483,8 @@ export default function App() {
       stage: 'assigned',
       assignedTo: newCliAssignee,
       assignedBy: currentUser?.id || '',
+      totalParts: newCliTotalParts,
+      currentPart: 1,
       estimatedHours: 10,
       loggedHours: 0,
       turnaroundSLA: 48,
@@ -1434,7 +1442,12 @@ export default function App() {
                             }}
                           >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px' }}>
-                              <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.25' }}>{job.title}</span>
+                              <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.25' }}>
+                                {job.title}
+                                {(job.totalParts || 1) > 1 && (
+                                  <span className="badge badge-normal" style={{ marginLeft: '6px', fontSize: '0.65rem' }}>Part {job.currentPart || 1}/{job.totalParts}</span>
+                                )}
+                              </span>
                               {job.cancellationRequested ? (
                                 <span className="badge" style={{ background: '#dc2626', color: 'var(--text-main)' }}>Cancel Req</span>
                               ) : job.isOverdue ? (
@@ -2350,16 +2363,25 @@ export default function App() {
                 <div style={{ background: 'rgba(6, 182, 212, 0.1)', border: '1px solid #0284c7', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
                   <h4 style={{ color: '#0284c7', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px' }}>Assign Project:</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-                    <select 
-                      className="input-field" 
-                      value={selectedAssigneeId}
-                      onChange={(e) => setSelectedAssigneeId(e.target.value)}
-                    >
-                      <option value="">Select Editor / Freelancer...</option>
-                      {team.filter((t) => t.roleType !== 'owner').map((t) => (
-                        <option key={t.id} value={t.id}>{t.name} ({t.roleType})</option>
-                      ))}
-                    </select>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                      <select 
+                        className="input-field" 
+                        value={selectedAssigneeId}
+                        onChange={(e) => setSelectedAssigneeId(e.target.value)}
+                      >
+                        <option value="">Select Editor / Freelancer...</option>
+                        {team.filter((t) => t.roleType !== 'owner').map((t) => (
+                          <option key={t.id} value={t.id}>{t.name} ({t.roleType})</option>
+                        ))}
+                      </select>
+
+                      <select value={selectedTotalParts} onChange={(e) => setSelectedTotalParts(Number(e.target.value))} className="input-field">
+                        <option value={1}>1 Part (Full Delivery)</option>
+                        <option value={2}>2 Parts (Partial Work)</option>
+                        <option value={3}>3 Parts (Partial Work)</option>
+                        <option value={4}>4 Parts (Partial Work)</option>
+                      </select>
+                    </div>
 
                     {selectedAssigneeId && team.find(t => t.id === selectedAssigneeId)?.roleType === 'freelance' && (
                       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -2395,6 +2417,8 @@ export default function App() {
                             ...showJobDetailModal,
                             stage: 'assigned',
                             assignedTo: selectedAssigneeId,
+                            totalParts: selectedTotalParts,
+                            currentPart: 1,
                             freelanceCost: isFreelance ? Number(freelanceCostInput) : undefined,
                             freelanceDeadlineDate: isFreelance ? freelanceDeadlineInput : undefined,
                             notes: [...showJobDetailModal.notes, `[ASSIGNED by ${currentUser?.name} on ${new Date().toLocaleString()}] to ${assignee?.name} ${isFreelance ? `for $${freelanceCostInput} due ${freelanceDeadlineInput}` : ''}`]
@@ -2470,7 +2494,7 @@ export default function App() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div>
                       <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
-                        Final Deliverable Cloud Link (`Google Drive #3 / Dropbox URL`) *
+                        Final Deliverable Cloud Link (`Google Drive #3 / Dropbox URL`) {((showJobDetailModal.totalParts || 1) > 1 && (showJobDetailModal.currentPart || 1) < (showJobDetailModal.totalParts || 1)) ? '(Optional for Part Submissions)' : '*'}
                       </label>
                       <input 
                         type="text" 
@@ -2520,6 +2544,29 @@ export default function App() {
                     Manager Sign-Off & Deliver
                   </button>
                 )}
+                {isManagerOrOwner && showJobDetailModal.stage === 'review' && (showJobDetailModal.totalParts || 1) > 1 && (showJobDetailModal.currentPart || 1) < (showJobDetailModal.totalParts || 1) && (
+                  <button 
+                    className="btn-primary" 
+                    style={{ background: '#16a34a' }}
+                    onClick={async () => {
+                      const nextPart = (showJobDetailModal.currentPart || 1) + 1;
+                      await updateJob(showJobDetailModal.id, {
+                        ...showJobDetailModal,
+                        currentPart: nextPart,
+                        stage: 'assigned',
+                        turnaroundClockStatus: 'Accepted & Ticking',
+                        notes: [
+                          ...showJobDetailModal.notes,
+                          `[MANAGER APPROVAL]: Part ${(showJobDetailModal.currentPart || 1)} approved by ${currentUser?.name}. Starting Part ${nextPart}.`
+                        ]
+                      });
+                      setShowJobDetailModal(null);
+                      triggerAlert(`Part ${(showJobDetailModal.currentPart || 1)} approved! Project sent back to Editor for Part ${nextPart}.`);
+                    }}
+                  >
+                    Approve Part {showJobDetailModal.currentPart || 1} & Start Next Part
+                  </button>
+                )}
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button className="btn-secondary" onClick={() => setShowJobDetailModal(null)}>Close</button>
@@ -2536,7 +2583,7 @@ export default function App() {
                     style={{ background: '#1877f2' }}
                     onClick={() => handleEditorSubmitProject(showJobDetailModal.id)}
                   >
-                    Submit Deliverable & Handoff
+                    {((showJobDetailModal.totalParts || 1) > 1 && (showJobDetailModal.currentPart || 1) < (showJobDetailModal.totalParts || 1)) ? `Submit Part ${showJobDetailModal.currentPart || 1} of ${showJobDetailModal.totalParts || 1} to Manager` : 'Submit Final Deliverable & Handoff'}
                   </button>
                 )}
               </div>
@@ -2687,11 +2734,12 @@ export default function App() {
 
 
                 {isManagerOrOwner && (
-                  <div>
-                    <label style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
-                      3. Whom to Assign ('Internal PC Seat or Freelance Contractor')
-                    </label>
-                    <select value={newCliAssignee} onChange={(e) => setNewCliAssignee(e.target.value)} className="input-field">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                        3. Whom to Assign ('Internal PC / Freelance')
+                      </label>
+                      <select value={newCliAssignee} onChange={(e) => setNewCliAssignee(e.target.value)} className="input-field">
                       <option value="">Assign Later...</option>
                       <optgroup label="Internal Workstation Staff ('Full-Time')">
                         {team.filter((t) => t.roleType === 'editor' || t.roleType === 'manager').map((t) => (
@@ -2704,6 +2752,18 @@ export default function App() {
                         ))}
                       </optgroup>
                     </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                        Delivery Structure
+                      </label>
+                      <select value={newCliTotalParts} onChange={(e) => setNewCliTotalParts(Number(e.target.value))} className="input-field">
+                        <option value={1}>1 Part (Full Delivery)</option>
+                        <option value={2}>2 Parts (Partial Work)</option>
+                        <option value={3}>3 Parts (Partial Work)</option>
+                        <option value={4}>4 Parts (Partial Work)</option>
+                      </select>
+                    </div>
                   </div>
                 )}
 

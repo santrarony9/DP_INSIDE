@@ -77,11 +77,13 @@ export interface JobCard {
   assignedFreelancerName?: string; // If assigned to Freelance Pool, which specific freelancer?
   freelanceCost?: number; // Estimated/Actual cost for this contractor
   freelanceDeadlineDate?: string; // Estimated Delivery Date (Date string)
+  totalParts?: number; // 1 to 4 parts
+  currentPart?: number; // 1 to totalParts
   estimatedHours: number; // e.g. 2 hours edit work
   loggedHours: number; // e.g. 18.5 hours (overdue anomaly!)
   turnaroundSLA: number; // target hours from start to finish
   acceptedAt?: string; // Timestamp when employee accepted the job (e.g. "2026-07-16 10:15:00")
-  turnaroundClockStatus?: 'Not Started' | 'Accepted & Ticking' | 'Completed';
+  turnaroundClockStatus?: 'Not Started' | 'Accepted & Ticking' | 'Completed' | 'Paused (Reviewing Part)';
   daysInStage: number; // how many days card has sat in current column
   isOverdue: boolean;
   createdAt: string;
